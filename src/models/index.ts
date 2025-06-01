@@ -11,17 +11,6 @@ import { Person } from './person';
 import { Chats } from './chats';
 import { ChatSession } from './chats-session';
 import { ChatUsers } from './chats-users';
-import { Interests } from "./interests";
-import { Languages } from "./languages";
-import { DatingLocation } from './dating-location';
-import { InterestsUsers } from './interests-users';
-import { LanguagesSpoken } from './languages-spoken';
-import { LifeStyle } from './life-style';
-import { Likes } from './likes';
-import { LookingForUsers } from './looking_for_users';
-import { Matches } from './matches';
-import { ReportedUsers } from './reported-users';
-import { WorkEducation } from './work-education';
 
 
 export {
@@ -38,15 +27,4 @@ export {
 	Chats,
 	ChatSession,
 	ChatUsers,
-	Interests,
-	Languages,
-	DatingLocation,
-	InterestsUsers,
-	LanguagesSpoken,
-	LifeStyle,
-	Likes,
-	LookingForUsers,
-	Matches,
-	ReportedUsers,
-	WorkEducation
 }
