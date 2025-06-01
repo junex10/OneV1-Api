@@ -1,7 +1,7 @@
 enum COMPANY_INFORMATION {
-	NAME = 'Dating App',
+	NAME = 'One',
 	ID = 1,
-	DESCRIPTION = 'Dating App bruh'
+	DESCRIPTION = 'One'
 }
 enum LEVELS {
 	ADMIN = 1,

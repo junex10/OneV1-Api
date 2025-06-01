@@ -8,6 +8,7 @@ import { HomeModule } from "./web/home/home.module";
 // App
 
 import { AppAuthModule } from "./app/auth/auth.module";
+import { AppMapModule } from "./app/map/map.module";
 
 export {
     AuthModule,
@@ -16,5 +17,6 @@ export {
     HomeModule,
 
     // App
-    AppAuthModule
+    AppAuthModule,
+    AppMapModule
 }

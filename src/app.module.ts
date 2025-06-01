@@ -6,7 +6,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule } from '@nestjs/config';
 import { SocketController } from './utils/socket/socket.controller';
 import { SocketModule } from './utils/socket/socket.module';
-import { PDFModule } from './vendor/nestjs-pdf';
 const SequelizeConfig = require('./config');
 import { MAIL_CONFIG } from './utils/mailer';
 import * as path from 'path';
@@ -20,7 +19,8 @@ import {
 
   // App
 
-  AppAuthModule
+  AppAuthModule,
+  AppMapModule
 } from 'src/controllers';
 
 // Models
@@ -65,14 +65,6 @@ import {
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
-    PDFModule.register({
-      isGlobal: true,
-      view: {
-        root: path.join(__dirname, 'resources/templates'),
-        engine: 'handlebars',
-        extension: 'hbs',
-      },
-    }),
     AuthModule,
     SocketModule,
     NotificationsModule,
@@ -82,6 +74,7 @@ import {
     //App
 
     AppAuthModule,
+    AppMapModule,
 
     ScheduleModule.forRoot()
   ],
