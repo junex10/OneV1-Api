@@ -1,0 +1,54 @@
+enum COMPANY_INFORMATION {
+	NAME = 'Dating App',
+	ID = 1,
+	DESCRIPTION = 'Dating App bruh'
+}
+enum LEVELS {
+	ADMIN = 1,
+	USER = 2
+}
+enum PASSWORD_RESET_STATUS {
+	ACTIVE = 1,
+	INACTIVE = 0
+}
+
+export default {
+	COMPANY_INFORMATION,
+	LEVELS,
+	PASSWORD_RESET_STATUS,
+	USER: {
+		USER_VERIFIED: {
+			VERIFIED: 1,
+			NO_VERIFIED: 0
+		}
+	},
+	NOTIFICATIONS: {
+		STATUS: {
+			READED: 1,
+			UNREADED: 0
+		}
+	},
+	PER_PAGE: 30,
+	PER_PAGE_WEB: 10,
+	ACTIONS: {
+		MAIN: 1,
+		NO_MAIN: 0
+	},
+	MODULES: {
+		PROFILE: '/dashboard/profile',
+		RECIPES: '/recipes'
+	},
+	MATCHES: {
+		STAND_BY: 1,
+		REJECTED: 2,
+		ACCEPTED: 3,
+		BLOCKED: 4
+	},
+	REPORTED_USERS: {
+		RECEIVED: 1,
+		IN_PROCESS: 2,
+		REJECTED: 3,
+		ACCEPTED: 4,
+		FINISHED: 5
+	}
+}
