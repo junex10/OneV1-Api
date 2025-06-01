@@ -10,9 +10,9 @@ module.exports = {
     const items = [
         {
             id: 1,
-            name: 'Dating',
-            email: "dating@mail.com",
-            client: 'Dating App'
+            name: 'One',
+            email: "one@mail.com",
+            client: 'One'
         }
     ];
 

@@ -11,57 +11,23 @@ module.exports = {
 
     items = [
       {
-        id: 1,
         action_id: 1,
         level_id: Constants.USERS.LEVELS.ADMIN
       },
       {
-        id: 2,
         action_id: 2,
         level_id: Constants.USERS.LEVELS.ADMIN
       },
-      {
-        id: 3,
-        action_id: 3,
-        level_id: Constants.USERS.LEVELS.ADMIN
-      },
-      {
-        id: 4,
-        action_id: 4,
-        level_id: Constants.USERS.LEVELS.ADMIN
-      },
-      {
-        id: 5,
-        action_id: 5,
-        level_id: Constants.USERS.LEVELS.ADMIN
-      }
     ];
     queryInterface.bulkInsert('permissions',items);
 
     items = [
         {
-          id: 6,
           action_id: 1,
           level_id: Constants.USERS.LEVELS.USER
         },
         {
-          id: 7,
           action_id: 2,
-          level_id: Constants.USERS.LEVELS.USER
-        },
-        {
-          id: 8,
-          action_id: 3,
-          level_id: Constants.USERS.LEVELS.USER
-        },
-        {
-          id: 9,
-          action_id: 4,
-          level_id: Constants.USERS.LEVELS.USER
-        },
-        {
-          id: 10,
-          action_id: 5,
           level_id: Constants.USERS.LEVELS.USER
         }
       ];
