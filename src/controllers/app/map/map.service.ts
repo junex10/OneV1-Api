@@ -24,9 +24,29 @@ export class AppMapService {
 
 	async getPlacesNearby(@Body() request: Coordinates) {
 
+		console.log('REQUESTED')
+
 		try {
-			const places = await this.http.post(`${GOOGLE_API}place/nearbysearch/json?location=${request.lat},${request.lng}&radius=1000&key=${GOOGLE_API_KEY}`).toPromise();
-			return places?.data?.results;
+			const places = await this.http.post(`${GOOGLE_API}place/nearbysearch/json?location=${request.latitude},${request.longitude}&radius=1000&key=${GOOGLE_API_KEY}`).toPromise();
+
+			const data = places?.data?.results?.map(item => {
+				return {
+					location: item?.geometry?.location,
+					icon: item?.icon,
+					icon_background_color: item?.icon_background_color,
+					name: item?.name,
+					photos: item?.photos,
+					place_id: item?.place_id,
+					types: item?.types,
+					business_status: item?.business_status || null,
+					rating: item?.rating || null,
+					user_ratings_total: item?.user_ratings_total || null
+				}
+			});
+
+			// Add here business model logic later
+
+			return data;
 		} catch(e) {
 			return null;
 		}

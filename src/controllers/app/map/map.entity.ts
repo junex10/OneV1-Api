@@ -5,7 +5,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class Coordinates {
     @ApiProperty({ required: true })
-	lat: number;
+	latitude: number;
     @ApiProperty({ required: true })
-	lng: number;
+	longitude: number;
 }
