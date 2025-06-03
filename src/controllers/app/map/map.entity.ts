@@ -26,5 +26,7 @@ export class Route {
 
 export class GetEvents {
   @ApiProperty({ required: true })
-  coordinates: Coordinates;
+  latitude: number;
+  @ApiProperty({ required: true })
+  longitude: number;
 }
