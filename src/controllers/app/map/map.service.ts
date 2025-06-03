@@ -2,7 +2,7 @@ import { Injectable, Body } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { InjectModel } from '@nestjs/sequelize';
 import { User, Person } from 'src/models';
-import { Coordinates, Route } from './map.entity';
+import { Coordinates, GetEvents, Route } from './map.entity';
 
 const GOOGLE_API = process.env.GOOGLE_API;
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
@@ -40,8 +40,6 @@ export class AppMapService {
 
       // Add here business model logic later
 
-      console.log('REQUESTED');
-
       return data;
     } catch (e) {
       return null;
@@ -59,10 +57,16 @@ export class AppMapService {
 
       const data = getRoute?.data?.routes?.places[0];
 
-      console.log('REQUESTED');
-
       // Add here business model logic later
       return data;
+    } catch (e) {
+      return null;
+    }
+  }
+  async getEvents(@Body() request: GetEvents) {
+    try {
+      // Add here business model logic later
+      return {};
     } catch (e) {
       return null;
     }

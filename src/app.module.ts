@@ -18,9 +18,8 @@ import {
   HomeModule,
 
   // App
-
   AppAuthModule,
-  AppMapModule
+  AppMapModule,
 } from 'src/controllers';
 
 // Models
@@ -36,8 +35,11 @@ import {
   Actions,
   CompanyInformation,
   Chats,
-	ChatSession,
-	ChatUsers,
+  ChatSession,
+  ChatUsers,
+  EventsType,
+  Events,
+  EventLikesUser,
 } from './models';
 
 @Module({
@@ -58,8 +60,11 @@ import {
         CompanyInformation,
         Chats,
         ChatSession,
-        ChatUsers
-      ]
+        ChatUsers,
+        EventsType,
+        Events,
+        EventLikesUser,
+      ],
     }),
     MailerModule.forRoot(MAIL_CONFIG),
     ServeStaticModule.forRoot({
@@ -76,11 +81,9 @@ import {
     AppAuthModule,
     AppMapModule,
 
-    ScheduleModule.forRoot()
+    ScheduleModule.forRoot(),
   ],
-  providers: [
-    SocketController
-  ],
-  controllers: []
+  providers: [SocketController],
+  controllers: [],
 })
-export class AppModule { }
+export class AppModule {}
