@@ -12,28 +12,32 @@ module.exports = {
     items = [
       {
         action_id: 1,
-        level_id: Constants.USERS.LEVELS.ADMIN
+        level_id: Constants.USERS.LEVELS.ADMIN,
       },
       {
         action_id: 2,
-        level_id: Constants.USERS.LEVELS.ADMIN
+        level_id: Constants.USERS.LEVELS.ADMIN,
+      },
+      {
+        action_id: 3,
+        level_id: Constants.USERS.LEVELS.ADMIN,
       },
     ];
-    queryInterface.bulkInsert('permissions',items);
+    queryInterface.bulkInsert('permissions', items);
 
     items = [
-        {
-          action_id: 1,
-          level_id: Constants.USERS.LEVELS.USER
-        },
-        {
-          action_id: 2,
-          level_id: Constants.USERS.LEVELS.USER
-        }
-      ];
+      {
+        action_id: 1,
+        level_id: Constants.USERS.LEVELS.USER,
+      },
+      {
+        action_id: 2,
+        level_id: Constants.USERS.LEVELS.USER,
+      },
+    ];
 
-      return queryInterface.bulkInsert('permissions',items);
+    return queryInterface.bulkInsert('permissions', items);
   },
 
-  down: async (queryInterface, Sequelize) => {}
+  down: async (queryInterface, Sequelize) => {},
 };

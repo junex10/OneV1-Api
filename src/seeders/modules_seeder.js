@@ -13,18 +13,25 @@ module.exports = {
         name: 'Profile',
         icon: 'profile',
         code: 'profile',
-        status: Constants.SEEDERS.MODULES_STATUS.AVAILABLE
+        status: Constants.SEEDERS.MODULES_STATUS.AVAILABLE,
       },
       {
         id: 2,
         name: 'Chat',
         icon: 'chat',
         code: 'chat',
-        status: Constants.SEEDERS.MODULES_STATUS.AVAILABLE
-      }
+        status: Constants.SEEDERS.MODULES_STATUS.AVAILABLE,
+      },
+      {
+        id: 3,
+        name: 'Testing', // This allow to test the database uploading JSON
+        icon: 'test',
+        code: 'test',
+        status: Constants.SEEDERS.MODULES_STATUS.AVAILABLE,
+      },
     ];
-    return queryInterface.bulkInsert('modules',items);
+    return queryInterface.bulkInsert('modules', items);
   },
 
-  down: async (queryInterface, Sequelize) => {}
+  down: async (queryInterface, Sequelize) => {},
 };

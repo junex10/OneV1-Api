@@ -1,5 +1,4 @@
-import { ProfileInterceptor } from "./profile.interceptor";
+import { ProfileInterceptor } from './profile.interceptor';
+import { TestingInterceptor } from './testing.interceptor';
 
-export {
-    ProfileInterceptor,
-}
+export { ProfileInterceptor, TestingInterceptor };

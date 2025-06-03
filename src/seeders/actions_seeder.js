@@ -13,18 +13,25 @@ module.exports = {
         main: Constants.SEEDERS.ACTIONS.MAIN,
         module_id: Constants.SEEDERS.MODULES.PROFILE,
         name: 'Profile',
-        code: '/profile'
+        code: '/profile',
       },
       {
         id: 2,
         main: Constants.SEEDERS.ACTIONS.MAIN,
         module_id: Constants.SEEDERS.MODULES.CHAT,
         name: 'Chat',
-        code: '/chat'
-      }
+        code: '/chat',
+      },
+      {
+        id: 3,
+        main: Constants.SEEDERS.ACTIONS.MAIN,
+        module_id: Constants.SEEDERS.MODULES.TESTING,
+        name: 'Testing',
+        code: '/test',
+      },
     ];
-    return queryInterface.bulkInsert('actions',items);
+    return queryInterface.bulkInsert('actions', items);
   },
 
-  down: async (queryInterface, Sequelize) => {}
+  down: async (queryInterface, Sequelize) => {},
 };

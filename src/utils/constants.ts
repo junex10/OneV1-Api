@@ -37,6 +37,7 @@ export default {
   MODULES: {
     PROFILE: '/dashboard/profile',
     RECIPES: '/recipes',
+    TESTING: '/test',
   },
   EVENT_STATUS: {
     ACTIVE: 1,

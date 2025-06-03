@@ -9,15 +9,16 @@ import { Observable } from 'rxjs';
 import { JWTAuth, Constants } from 'src/utils';
 
 @Injectable()
-export class ProfileInterceptor implements NestInterceptor {
+export class TestingInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const auth = context.getArgs()[0]?.headers?.authorization;
+    console.log(auth, ' AUTH ');
     if (auth !== '' && auth !== undefined) {
       const jwt = JWTAuth.readToken(auth)?.permissions;
       const main = jwt.filter(
         (x) =>
           x.actions.main === Constants.ACTIONS.MAIN &&
-          x.actions.code === Constants.MODULES.PROFILE,
+          x.actions.code === Constants.MODULES.TESTING,
       );
       if (main.length === 0) {
         throw new ForbiddenException(
