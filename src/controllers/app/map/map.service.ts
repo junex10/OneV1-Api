@@ -40,6 +40,8 @@ export class AppMapService {
 
       // Add here business model logic later
 
+      console.log('REQUESTED');
+
       return data;
     } catch (e) {
       return null;
@@ -56,6 +58,8 @@ export class AppMapService {
       const getRoute = await this.http.post(route).toPromise();
 
       const data = getRoute?.data?.routes?.places[0];
+
+      console.log('REQUESTED');
 
       // Add here business model logic later
       return data;
