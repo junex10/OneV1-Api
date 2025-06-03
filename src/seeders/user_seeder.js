@@ -21,11 +21,19 @@ module.exports = {
         password: bcrypt.hashSync('123456', salt),
         level_id: Constants.USERS.LEVELS.USER,
         verified: Constants.SEEDERS.USER_VERIFIED.VERIFIED,
-        status: Constants.USERS.STATUS.ACTIVATED
-      }
+        status: Constants.USERS.STATUS.ACTIVATED,
+      },
+      {
+        id: 3,
+        email: 'user_party@mail.com',
+        password: bcrypt.hashSync('123456', salt),
+        level_id: Constants.USERS.LEVELS.USER,
+        verified: Constants.SEEDERS.USER_VERIFIED.VERIFIED,
+        status: Constants.USERS.STATUS.ACTIVATED,
+      },
     ];
-    return queryInterface.bulkInsert('users',items);
+    return queryInterface.bulkInsert('users', items);
   },
 
-  down: async (queryInterface, Sequelize) => {}
+  down: async (queryInterface, Sequelize) => {},
 };

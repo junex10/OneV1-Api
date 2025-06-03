@@ -1,7 +1,7 @@
 import { Injectable, Body } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { InjectModel } from '@nestjs/sequelize';
-import { User, Person } from 'src/models';
+import { User, Person, Events } from 'src/models';
 import { Coordinates, GetEvents, Route } from './map.entity';
 
 const GOOGLE_API = process.env.GOOGLE_API;
@@ -12,6 +12,7 @@ export class AppMapService {
   constructor(
     @InjectModel(User) private userModel: typeof User,
     @InjectModel(Person) private personModel: typeof Person,
+    @InjectModel(Events) private eventModel: typeof Events,
     private readonly http: HttpService,
   ) {}
 
@@ -65,6 +66,12 @@ export class AppMapService {
   }
   async getEvents(@Body() request: GetEvents) {
     try {
+      /*const data = await this.eventModel.findAndCountAll({
+        where: {
+
+        }
+      })*/
+
       // Add here business model logic later
       return {};
     } catch (e) {

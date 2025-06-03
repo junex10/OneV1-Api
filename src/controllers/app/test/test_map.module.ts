@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AppMapService } from './map.service';
-import { AppMapController } from './map.controller';
+import { AppTestMapService } from './test_map.service';
+import { AppTestMapController } from './test_map.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
 import {
   User,
@@ -26,7 +26,7 @@ import { HttpModule } from '@nestjs/axios';
     ]),
     HttpModule,
   ],
-  controllers: [AppMapController],
-  providers: [AppMapService],
+  controllers: [AppTestMapController],
+  providers: [AppTestMapService],
 })
-export class AppMapModule {}
+export class AppTestMapModule {}

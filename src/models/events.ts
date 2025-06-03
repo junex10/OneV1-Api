@@ -39,10 +39,10 @@ export class Events extends Model {
   content: string;
 
   @Column
-  latitude: number;
+  latitude: string;
 
   @Column
-  longitude: number;
+  longitude: string;
 
   @Column
   likes: number;
