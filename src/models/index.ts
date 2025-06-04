@@ -14,6 +14,7 @@ import { ChatUsers } from './chats-users';
 import { EventsType } from './events_type';
 import { Events } from './events';
 import { EventLikesUser } from './event_likes_user';
+import { UsersCode } from './users_code';
 
 export {
   Level,
@@ -32,4 +33,5 @@ export {
   EventsType,
   Events,
   EventLikesUser,
+  UsersCode,
 };

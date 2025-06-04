@@ -21,6 +21,10 @@ export default {
       VERIFIED: 1,
       NO_VERIFIED: 0,
     },
+    USER_CODE_STATUS: {
+      AVAILABLE: 1,
+      DISABLED: 0,
+    },
   },
   NOTIFICATIONS: {
     STATUS: {

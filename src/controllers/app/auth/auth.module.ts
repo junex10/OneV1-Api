@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AppAuthService } from './auth.service';
 import { AppAuthController } from './auth.controller';
-import { SequelizeModule } from "@nestjs/sequelize";
-import { User, Modules, PasswordReset, Person } from 'src/models';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { User, Modules, PasswordReset, Person, UsersCode } from 'src/models';
 
 @Module({
   imports: [
@@ -10,14 +10,11 @@ import { User, Modules, PasswordReset, Person } from 'src/models';
       User,
       Modules,
       PasswordReset,
-      Person
-    ])
+      Person,
+      UsersCode,
+    ]),
   ],
-  controllers: [
-    AppAuthController
-  ],
-  providers: [
-    AppAuthService
-  ]
+  controllers: [AppAuthController],
+  providers: [AppAuthService],
 })
 export class AppAuthModule {}

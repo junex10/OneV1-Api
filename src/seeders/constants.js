@@ -54,5 +54,9 @@ module.exports = {
       ACTIVATED: 1,
       DISABLED: 0,
     },
+    USER_CODE_STATUS: {
+      AVAILABLE: 1,
+      DISABLED: 0,
+    },
   },
 };

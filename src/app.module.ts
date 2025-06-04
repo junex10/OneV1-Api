@@ -41,6 +41,7 @@ import {
   EventsType,
   Events,
   EventLikesUser,
+  UsersCode,
 } from './models';
 
 @Module({
@@ -65,6 +66,7 @@ import {
         EventsType,
         Events,
         EventLikesUser,
+        UsersCode,
       ],
     }),
     MailerModule.forRoot(MAIL_CONFIG),
