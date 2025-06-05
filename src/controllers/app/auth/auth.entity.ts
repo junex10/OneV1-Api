@@ -78,6 +78,19 @@ export class VerifyUserDTO {
   @IsNotEmpty({ message: 'The code is required' })
   code: number;
 }
+export class VerifyNewRegisterDTO {
+  @ApiProperty({ required: false })
+  username: string;
+  @ApiProperty({ required: false })
+  email: string;
+  @ApiProperty({ required: false })
+  phone: number;
+}
+export class VerifyPhoneDTO {
+  @ApiProperty({ required: true })
+  @IsNotEmpty({ message: 'The phone is required' })
+  phone: string;
+}
 export class PermissionDTO {
   @ApiProperty({ required: true })
   token: string;

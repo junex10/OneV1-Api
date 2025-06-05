@@ -23,6 +23,8 @@ import {
   PermissionDTO,
   VerifyEmailDTO,
   PagesDTO,
+  VerifyPhoneDTO,
+  VerifyNewRegisterDTO,
 } from './auth.entity';
 import { AppAuthService } from './auth.service';
 import { Constants, Hash, UploadFile, JWTAuth } from 'src/utils';
@@ -210,7 +212,6 @@ export class AppAuthController {
   async verify(@Res() response: Response, @Body() request: VerifyUserDTO) {
     try {
       const code: number = request.code;
-      console.log(request, ' HERE ');
       const verified = await this.authService.verify(code);
       if (verified) {
         return response.status(HttpStatus.OK).json({
@@ -229,6 +230,29 @@ export class AppAuthController {
     }
   }
 
+  @Post('/verify-new-account')
+  async verify_username(
+    @Res() response: Response,
+    @Body() request: VerifyNewRegisterDTO,
+  ) {
+    try {
+      const verified = await this.authService.verify_register(request);
+      if (verified) {
+        return response.status(HttpStatus.OK).json({
+          message: 'User verified correctly',
+        });
+      } else {
+        return response.status(HttpStatus.OK).json({
+          error: 'We could not verified the user and/or the user was verified',
+        });
+      }
+    } catch (e) {
+      throw new UnprocessableEntityException(
+        'Connection error, please try again',
+        e.message,
+      );
+    }
+  }
   @Post('checkPermissions')
   async checkPermissions(
     @Res() response: Response,

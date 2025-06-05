@@ -10,7 +10,12 @@ import {
   UsersCode,
 } from 'src/models';
 import { MailerService } from '@nestjs-modules/mailer';
-import { RecoverParams, ResetParams, RegisterParams } from './auth.entity';
+import {
+  RecoverParams,
+  ResetParams,
+  RegisterParams,
+  VerifyNewRegisterDTO,
+} from './auth.entity';
 import { Constants, Hash, Globals, JWTAuth } from 'src/utils';
 import * as moment from 'moment';
 
@@ -175,7 +180,14 @@ export class AppAuthService {
     } catch (e) {
       console.log(e);
     }
-    return user;
+
+    const getUser = await this.userModel.findOne({
+      include: [Person],
+      where: {
+        id: user.id,
+      },
+    });
+    return getUser;
   }
 
   async getModules(level: number) {
@@ -217,6 +229,33 @@ export class AppAuthService {
       },
     );
     return user[0];
+  };
+
+  verify_register = async (request: VerifyNewRegisterDTO) => {
+    let user: any;
+    if (request.username) {
+      user = await this.personModel.findOne({
+        where: {
+          username: request.username,
+        },
+      });
+    } else if (request.email) {
+      user = await this.userModel.findOne({
+        where: {
+          email: request.email,
+        },
+      });
+    } else {
+      user = await this.personModel.findOne({
+        where: {
+          phone: request.phone,
+        },
+      });
+    }
+
+    if (user) return null;
+
+    return true;
   };
 
   checkPermissions = async (
