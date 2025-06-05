@@ -18,6 +18,9 @@ export class UsersCode extends Model {
   @Column
   code: number;
 
+  @Column
+  user_id: number;
+
   @BelongsTo(() => User, 'user_id')
   user: User;
 

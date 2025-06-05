@@ -150,6 +150,7 @@ export class AppAuthService {
     const person = await this.personModel.create({
       name: request.name ?? null,
       lastname: request.lastname ?? null,
+      username: request?.username ?? null,
       user_id: user.id,
     });
 
@@ -185,15 +186,33 @@ export class AppAuthService {
     return modules;
   }
 
-  verify = async (url: string) => {
+  verify = async (code: number) => {
+    const getCode = await this.usersCodeModel.findOne({
+      where: {
+        code,
+        status: Constants.USER.USER_CODE_STATUS.AVAILABLE,
+      },
+    });
+    if (!getCode) return null;
+
+    await this.usersCodeModel.update(
+      {
+        status: Constants.USER.USER_CODE_STATUS.DISABLED,
+      },
+      {
+        where: {
+          id: getCode?.id,
+        },
+      },
+    );
+
     const user = await this.userModel.update(
       {
         verified: Constants.USER.USER_VERIFIED.VERIFIED,
       },
       {
         where: {
-          token: url,
-          verified: Constants.USER.USER_VERIFIED.NO_VERIFIED,
+          id: getCode?.user_id,
         },
       },
     );
