@@ -1,4 +1,4 @@
-import { Injectable, Body } from '@nestjs/common';
+import { Injectable, Body, Global } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import {
   User,
@@ -15,6 +15,7 @@ import {
   ResetParams,
   RegisterParams,
   VerifyNewRegisterDTO,
+  CheckCode,
 } from './auth.entity';
 import { Constants, Hash, Globals, JWTAuth } from 'src/utils';
 import * as moment from 'moment';
@@ -74,37 +75,24 @@ export class AppAuthService {
     });
   }
 
-  async updatePassword(
-    @Body() request: ResetParams,
-    user: User,
-    password: PasswordReset,
-  ) {
+  async updatePassword(@Body() request: ResetParams) {
     await this.userModel.update(
       {
         password: Hash.makeSync(request.password),
       },
       {
         where: {
-          id: user.id,
+          id: request.user_id,
         },
       },
     );
 
-    this.passwordResetModel.destroy({
+    const password = await this.passwordResetModel.destroy({
       where: {
-        id: password.id,
+        user_id: request.user_id,
       },
     });
-    return this.passwordResetModel.update(
-      {
-        status: Constants.PASSWORD_RESET_STATUS.INACTIVE,
-      },
-      {
-        where: {
-          id: password.id,
-        },
-      },
-    );
+    return password;
   }
 
   async recover(@Body() request: RecoverParams, user: User) {
@@ -160,12 +148,6 @@ export class AppAuthService {
     });
 
     const code = Globals.codeGenerater();
-
-    const userCode = await this.usersCodeModel.create({
-      code,
-      user_id: user.id,
-      status: Constants.USER.USER_CODE_STATUS.AVAILABLE,
-    });
 
     try {
       await this.mailerService.sendMail({
@@ -241,6 +223,7 @@ export class AppAuthService {
       });
     } else if (request.email) {
       user = await this.userModel.findOne({
+        include: [Person],
         where: {
           email: request.email,
         },
@@ -253,7 +236,31 @@ export class AppAuthService {
       });
     }
 
-    if (user) return null;
+    if (user && !request.getUser) return null;
+    else if (request.getUser) {
+      //We generate the new code in passwordReset
+      const code = Globals.codeGenerater();
+      await this.passwordResetModel.create({
+        user_id: user.id,
+        code,
+        status: Constants.PASSWORD_RESET_STATUS.ACTIVE,
+      });
+      // We send email for the new code
+      try {
+        await this.mailerService.sendMail({
+          to: user.email,
+          subject: process.env.MAIL_FROM_NAME,
+          template: './reset',
+          context: {
+            user: user.person.username,
+            code,
+          },
+        });
+      } catch (e) {
+        console.log(e);
+      }
+      return user;
+    }
 
     return true;
   };
@@ -270,6 +277,23 @@ export class AppAuthService {
       if (auth.length > 0) return true;
     }
     return false;
+  };
+
+  checkCode = async (request: CheckCode) => {
+    const updated = await this.passwordResetModel.update(
+      {
+        status: Constants.PASSWORD_RESET_STATUS.INACTIVE,
+      },
+      {
+        where: {
+          user_id: request.user_id,
+          code: request.code,
+          status: Constants.PASSWORD_RESET_STATUS.ACTIVE,
+        },
+      },
+    );
+
+    return updated;
   };
 
   private generateURL = async () => {

@@ -56,6 +56,16 @@ export class RecoverParams {
   email: string;
 }
 
+export class CheckCode {
+  @ApiProperty({ required: true })
+  @Transform(({ value }: TransformFnParams) => value.toLowerCase().trim())
+  email: string;
+  @ApiProperty({ required: true })
+  user_id: number;
+  @ApiProperty({ required: true })
+  code: string;
+}
+
 export class CheckCodeParams {
   @ApiProperty({ required: true })
   code: string;
@@ -63,15 +73,15 @@ export class CheckCodeParams {
 
 export class ResetParams {
   @ApiProperty({ required: true })
-  @IsNotEmpty({ message: 'El campo nueva contraseña es requerido' })
-  @MinLength(6, { message: 'La contraseña debe tener mínimo 6 caracteres' })
+  @IsNotEmpty({ message: 'The new password field is required' })
+  @MinLength(6, { message: 'The password must be at least 6 characters long' })
   password: string;
 
   @ApiProperty({ required: true })
   password_confirmation: string;
 
   @ApiProperty({ required: true })
-  code: string;
+  user_id: number;
 }
 export class VerifyUserDTO {
   @ApiProperty({ required: true })
@@ -85,6 +95,8 @@ export class VerifyNewRegisterDTO {
   email: string;
   @ApiProperty({ required: false })
   phone: number;
+  @ApiProperty({ required: false })
+  getUser: boolean;
 }
 export class VerifyPhoneDTO {
   @ApiProperty({ required: true })

@@ -25,6 +25,7 @@ import {
   PagesDTO,
   VerifyPhoneDTO,
   VerifyNewRegisterDTO,
+  CheckCode,
 } from './auth.entity';
 import { AppAuthService } from './auth.service';
 import { Constants, Hash, UploadFile, JWTAuth } from 'src/utils';
@@ -135,18 +136,12 @@ export class AppAuthController {
   }
 
   @Post('/check-code')
-  async checkCode(@Body() request: CheckCodeParams, @Res() response: Response) {
+  async checkCode(@Body() request: CheckCode, @Res() response: Response) {
     try {
-      const password = await this.authService.getCode(request.code);
-
-      if (!password) {
-        return response.status(HttpStatus.OK).json({
-          result: false,
-        });
-      }
+      const code = await this.authService.checkCode(request);
 
       return response.status(HttpStatus.OK).json({
-        result: true,
+        result: code[0] ? true : false,
       });
     } catch (e) {
       throw new UnprocessableEntityException(
@@ -161,27 +156,11 @@ export class AppAuthController {
     try {
       if (request.password != request.password_confirmation) {
         return response.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
-          error: 'Las contraseñas no coinciden',
+          error: 'Passwords do not match',
         });
       }
 
-      const password = await this.authService.getCode(request.code);
-
-      if (!password) {
-        return response.status(HttpStatus.OK).json({
-          result: false,
-        });
-      }
-
-      const user = await this.authService.findByPk(password.user_id);
-
-      if (user.level_id == Constants.LEVELS.ADMIN) {
-        return response.status(HttpStatus.OK).json({
-          result: false,
-        });
-      }
-
-      await this.authService.updatePassword(request, user, password);
+      await this.authService.updatePassword(request);
 
       return response.status(HttpStatus.OK).json({
         result: true,
@@ -237,6 +216,12 @@ export class AppAuthController {
   ) {
     try {
       const verified = await this.authService.verify_register(request);
+      if (request.getUser) {
+        return response.status(HttpStatus.OK).json({
+          message: 'User verified correctly',
+          user: verified,
+        });
+      }
       if (verified) {
         return response.status(HttpStatus.OK).json({
           message: 'User verified correctly',
