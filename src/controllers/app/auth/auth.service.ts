@@ -32,7 +32,12 @@ export class AppAuthService {
     private mailerService: MailerService,
   ) {}
 
-  findUserVerified = async (email: string) => {
+  findUserVerified = async (username: string) => {
+    const person = await this.personModel.findOne({
+      where: {
+        username,
+      },
+    });
     const user = await this.userModel.findOne({
       include: [
         {
@@ -42,7 +47,7 @@ export class AppAuthService {
         'person',
       ],
       where: {
-        email,
+        id: person.user_id,
         verified: Constants.USER.USER_VERIFIED.VERIFIED,
       },
     });

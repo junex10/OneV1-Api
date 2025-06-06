@@ -11,7 +11,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class LoginParams {
   @ApiProperty({ required: true })
   @Transform(({ value }: TransformFnParams) => value.toLowerCase().trim())
-  email: string;
+  username: string;
 
   @ApiProperty({ required: true })
   password: string;

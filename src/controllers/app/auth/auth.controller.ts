@@ -37,7 +37,7 @@ export class AppAuthController {
   @Post('/login')
   async login(@Body() request: LoginParams, @Res() response: Response) {
     try {
-      const user = await this.authService.findUserVerified(request.email);
+      const user = await this.authService.findUserVerified(request.username);
       const errorMessage =
         'The credentials entered are incorrect and/or the account is not verified, please try again';
       if (!user) {
