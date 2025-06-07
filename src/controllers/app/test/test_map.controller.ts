@@ -24,7 +24,7 @@ export class AppTestMapController {
   constructor(private readonly mapService: AppTestMapService) {}
 
   @Post('/setEvents')
-  async getEvents(@Body() request: any, @Res() response: Response) {
+  async setEvents(@Body() request: any, @Res() response: Response) {
     try {
       const places = await this.mapService.setEvents(request);
 

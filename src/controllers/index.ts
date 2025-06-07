@@ -10,6 +10,7 @@ import { HomeModule } from './web/home/home.module';
 import { AppAuthModule } from './app/auth/auth.module';
 import { AppMapModule } from './app/map/map.module';
 import { AppTestMapModule } from './app/test/test_map.module';
+import { AppEventsModule } from './app/events/events.module';
 
 export {
   AuthModule,
@@ -21,4 +22,5 @@ export {
   AppAuthModule,
   AppMapModule,
   AppTestMapModule,
+  AppEventsModule,
 };

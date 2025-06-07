@@ -21,6 +21,7 @@ import {
   AppAuthModule,
   AppMapModule,
   AppTestMapModule,
+  AppEventsModule,
 } from 'src/controllers';
 
 // Models
@@ -84,6 +85,7 @@ import {
     AppAuthModule,
     AppMapModule,
     AppTestMapModule,
+    AppEventsModule,
 
     ScheduleModule.forRoot(),
   ],

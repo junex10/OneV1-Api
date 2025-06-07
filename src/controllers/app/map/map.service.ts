@@ -2,7 +2,7 @@ import { Injectable, Body } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { InjectModel } from '@nestjs/sequelize';
 import { User, Person, Events } from 'src/models';
-import { Coordinates, GetEvents, Route } from './map.entity';
+import { Coordinates, Route } from './map.entity';
 import { Sequelize } from 'sequelize';
 
 const GOOGLE_API = process.env.GOOGLE_API;
@@ -60,38 +60,6 @@ export class AppMapService {
       const data = getRoute?.data?.routes?.places[0];
 
       // Add here business model logic later
-      return data;
-    } catch (e) {
-      return null;
-    }
-  }
-  async getEvents(@Body() request: GetEvents) {
-    const radius = 10000; // Value in meters
-    const excludeRadius = 10;
-    try {
-      const data = await this.eventModel.findAll({
-        where: Sequelize.literal(`
-        (
-          6371000 * acos(
-            cos(radians(${request.latitude}))
-            * cos(radians(CAST(latitude AS DECIMAL(10,7))))
-            * cos(radians(CAST(longitude AS DECIMAL(10,7))) - radians(${request.longitude}))
-            + sin(radians(${request.latitude}))
-            * sin(radians(CAST(latitude AS DECIMAL(10,7))))
-          )
-        ) < ${radius}
-        AND (
-          6371000 * acos(
-            cos(radians(${request.latitude}))
-            * cos(radians(CAST(latitude AS DECIMAL(10,7))))
-            * cos(radians(CAST(longitude AS DECIMAL(10,7))) - radians(${request.longitude}))
-            + sin(radians(${request.latitude}))
-            * sin(radians(CAST(latitude AS DECIMAL(10,7))))
-          )
-        ) >= ${excludeRadius}
-      `),
-      });
-
       return data;
     } catch (e) {
       return null;

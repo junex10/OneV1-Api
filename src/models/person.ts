@@ -24,6 +24,9 @@ export class Person extends Model {
   username: string;
 
   @Column
+  subscribers: string;
+
+  @Column
   phone: string;
 
   @Column

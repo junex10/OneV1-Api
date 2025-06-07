@@ -23,10 +23,3 @@ export class Route {
   @ApiProperty({ required: false })
   waypoint: Coordinates;
 }
-
-export class GetEvents {
-  @ApiProperty({ required: true })
-  latitude: number;
-  @ApiProperty({ required: true })
-  longitude: number;
-}
