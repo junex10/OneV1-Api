@@ -45,6 +45,9 @@ export class Events extends Model {
   longitude: string;
 
   @Column
+  address: string;
+
+  @Column
   likes: number;
 
   @Column

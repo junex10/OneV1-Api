@@ -95,15 +95,15 @@ export class AppEventsController {
     @Res() response: Response,
   ) {
     try {
-      const place = await this.mapService.getEventsByUser(request);
+      const places = await this.mapService.getEventsByUser(request);
 
-      if (!place)
+      if (!places)
         return response
           .status(HttpStatus.UNPROCESSABLE_ENTITY)
           .json({ error: 'Connection error, please try again' });
 
       return response.status(HttpStatus.OK).json({
-        place,
+        places,
       });
     } catch (e) {
       throw new UnprocessableEntityException(

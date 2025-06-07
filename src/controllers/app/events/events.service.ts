@@ -101,6 +101,12 @@ export class AppEventsService {
   async getEventsByUser(@Body() request: GetEventsByUserDTO) {
     try {
       const data = await this.eventModel.findAndCountAll({
+        include: [
+          {
+            model: User,
+            include: [Person],
+          },
+        ],
         where: {
           user_id: request.user_id,
         },

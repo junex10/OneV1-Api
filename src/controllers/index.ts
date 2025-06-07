@@ -11,6 +11,7 @@ import { AppAuthModule } from './app/auth/auth.module';
 import { AppMapModule } from './app/map/map.module';
 import { AppTestMapModule } from './app/test/test_map.module';
 import { AppEventsModule } from './app/events/events.module';
+import { AppProfileModule } from './app/profile/profile.module';
 
 export {
   AuthModule,
@@ -23,4 +24,5 @@ export {
   AppMapModule,
   AppTestMapModule,
   AppEventsModule,
+  AppProfileModule,
 };
