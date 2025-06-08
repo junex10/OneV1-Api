@@ -154,6 +154,12 @@ export class AppAuthService {
 
     const code = Globals.codeGenerater();
 
+    await this.usersCodeModel.create({
+      code,
+      user_id: user.id,
+      status: Constants.USER.USER_CODE_STATUS.AVAILABLE,
+    });
+
     try {
       await this.mailerService.sendMail({
         to: user.email,
