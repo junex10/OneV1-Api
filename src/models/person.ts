@@ -27,6 +27,12 @@ export class Person extends Model {
   subscribers: string;
 
   @Column
+  latitude: string;
+
+  @Column
+  longitude: string;
+
+  @Column
   phone: string;
 
   @Column
