@@ -23,6 +23,7 @@ import {
   AppTestMapModule,
   AppEventsModule,
   AppProfileModule,
+  ChatModule,
 } from 'src/controllers';
 
 // Models
@@ -88,6 +89,7 @@ import {
     AppTestMapModule,
     AppEventsModule,
     AppProfileModule,
+    ChatModule,
 
     ScheduleModule.forRoot(),
   ],

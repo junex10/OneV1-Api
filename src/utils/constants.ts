@@ -48,4 +48,10 @@ export default {
     ALMOST_FINISHED: 2,
     FINISHED: 3,
   },
+  CHATS: {
+    VIEWED: {
+      READED: 1,
+      UNREAD: 0,
+    },
+  },
 };
