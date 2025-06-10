@@ -20,3 +20,12 @@ export class SetEvents {
   @ApiProperty({ required: false })
   expiration_time: number;
 }
+
+export class SetFriends {
+  @ApiProperty({ required: true })
+  sender_id: number;
+  @ApiProperty({ required: true })
+  receiver_id: number;
+  @ApiProperty({ required: true })
+  status: number;
+}

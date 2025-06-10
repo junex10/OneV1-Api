@@ -25,6 +25,11 @@ export default {
       AVAILABLE: 1,
       DISABLED: 0,
     },
+    FRIENDS: {
+      PENDING: 1,
+      ACCEPTED: 2,
+      REJECTED: 3,
+    },
   },
   NOTIFICATIONS: {
     STATUS: {

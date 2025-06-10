@@ -10,6 +10,7 @@ import {
   Events,
   EventsType,
   EventLikesUser,
+  Friends,
 } from 'src/models';
 import { HttpModule } from '@nestjs/axios';
 
@@ -23,6 +24,7 @@ import { HttpModule } from '@nestjs/axios';
       Events,
       EventsType,
       EventLikesUser,
+      Friends,
     ]),
     HttpModule,
   ],

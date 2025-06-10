@@ -13,7 +13,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
-import { SetEvents } from './test_map.entity';
+import { SetEvents, SetFriends } from './test_map.entity';
 import { AppTestMapService } from './test_map.service';
 import { TestingInterceptor } from 'src/interceptors';
 
@@ -35,6 +35,27 @@ export class AppTestMapController {
 
       return response.status(HttpStatus.OK).json({
         places,
+      });
+    } catch (e) {
+      throw new UnprocessableEntityException(
+        'Connection error, please try again',
+        e.message,
+      );
+    }
+  }
+
+  @Post('/setFriends')
+  async setFriends(@Body() request: [], @Res() response: Response) {
+    try {
+      const friends = await this.mapService.setFriends(request);
+
+      if (!friends)
+        return response
+          .status(HttpStatus.UNPROCESSABLE_ENTITY)
+          .json({ error: 'Connection error, please try again' });
+
+      return response.status(HttpStatus.OK).json({
+        friends,
       });
     } catch (e) {
       throw new UnprocessableEntityException(
