@@ -23,7 +23,9 @@ export class NewMessageDTO {
 }
 export class GetLogsDTO {
   @ApiProperty()
-  chat_session_id: number;
+  user_id: number;
+  @ApiProperty()
+  other_user_id: number;
 }
 export class DeleteDTO {
   @ApiProperty()

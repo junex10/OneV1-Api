@@ -1,39 +1,38 @@
-import { Column, Model, Table, CreatedAt, UpdatedAt, DeletedAt, BelongsTo } from "sequelize-typescript";
 import {
-    User
-} from '.';
+  Column,
+  Model,
+  Table,
+  CreatedAt,
+  UpdatedAt,
+  DeletedAt,
+  BelongsTo,
+} from 'sequelize-typescript';
+import { User } from '.';
 
 @Table({
   timestamps: true,
   paranoid: true,
-  tableName: 'chats_session'
+  tableName: 'chats_session',
 })
 export class ChatSession extends Model {
+  @Column
+  host_id: number;
 
-    @Column
-    host_id: number;
+  @BelongsTo(() => User, 'host_id')
+  host: User;
 
-    @BelongsTo(() => User, 'host_id')
-    host: User;
+  @Column
+  status: number;
 
-    @Column
-    status: number;
+  @CreatedAt
+  @Column
+  created_at: Date;
 
-    @Column
-    name: string;
+  @UpdatedAt
+  @Column
+  updated_at: Date;
 
-    @Column
-    attachment: string;
-
-    @CreatedAt
-    @Column
-    created_at: Date;
-
-    @UpdatedAt
-    @Column
-    updated_at: Date;
-
-    @DeletedAt
-    @Column
-    deleted_at: Date;
+  @DeletedAt
+  @Column
+  deleted_at: Date;
 }

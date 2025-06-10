@@ -64,4 +64,10 @@ module.exports = {
       REJECTED: 3,
     },
   },
+  CHATS: {
+    CHAT_SESSION: {
+      AVAILABLE: 1,
+      REMOVED: 0,
+    },
+  },
 };

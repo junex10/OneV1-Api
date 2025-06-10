@@ -138,19 +138,4 @@ export class ChatController {
       );
     }
   }
-
-  @Get('getUsers')
-  async getUsers(@Res() response: Response) {
-    try {
-      const users = await this.chatService.getUsers();
-      return response.status(HttpStatus.OK).json({
-        users,
-      });
-    } catch (e) {
-      throw new UnprocessableEntityException(
-        'A connection error has occurred, please try again',
-        e.message,
-      );
-    }
-  }
 }

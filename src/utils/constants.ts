@@ -58,5 +58,9 @@ export default {
       READED: 1,
       UNREAD: 0,
     },
+    CHAT_SESSION: {
+      AVAILABLE: 1,
+      REMOVED: 0,
+    },
   },
 };

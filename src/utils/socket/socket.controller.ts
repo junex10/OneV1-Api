@@ -8,7 +8,7 @@ import {
 import { Socket, Server } from 'socket.io';
 import SocketEvents from './socket.events';
 import { SocketService } from './socket.service';
-import { SocketCoordinates } from './socket.entity';
+import { SocketCoordinates, SocketNewChatMessage } from './socket.entity';
 
 const HEADERS = {
   Accept: 'application/json',
@@ -24,6 +24,14 @@ export class SocketController {
   @SubscribeMessage(SocketEvents.USER_LOCATION)
   onUserLocation(client, data: SocketCoordinates) {
     this.socketService.setUserLocation(data);
+    return { data };
+  }
+
+  // Chat
+  @SubscribeMessage(SocketEvents.NEW_MESSAGE)
+  onNewMessage(client, data: SocketNewChatMessage) {
+    console.log(data, ' RECEIVED');
+    this.socketService.newMessage(data);
     return { data };
   }
 

@@ -150,17 +150,63 @@ export class ChatService {
   };
 
   getLogs = async (request: GetLogsDTO) => {
-    const logs = await this.chatModel.findAll({
-      where: { chat_session_id: request.chat_session_id },
-      include: ['attachments_chats'],
+    // 1. Find all chat_session_ids where either user is present
+    const chatSessions = await this.chatUsersModel.findAll({
+      where: {
+        user_id: [request.user_id, request.other_user_id],
+      },
+      attributes: ['chat_session_id', 'user_id'],
+      raw: true,
     });
-    const chat = await this.chatSessionModel.findOne({
-      where: { id: request.chat_session_id },
+
+    // 2. Group by chat_session_id and count unique users per session
+    const sessionUserMap = {};
+    chatSessions.forEach(({ chat_session_id, user_id }) => {
+      if (!sessionUserMap[chat_session_id])
+        sessionUserMap[chat_session_id] = new Set();
+      sessionUserMap[chat_session_id].add(user_id);
     });
-    return {
-      logs,
-      photo: chat.attachment,
-    };
+
+    // 3. Find a session where both users are present
+    const sessionId = Object.entries(sessionUserMap).find(([, userSet]) => {
+      const set = userSet as Set<number>;
+      return (
+        set.has(request.user_id) &&
+        set.has(request.other_user_id) &&
+        set.size === 2
+      );
+    })?.[0];
+    let chatSession;
+    if (sessionId) {
+      // Session exists, get messages
+      chatSession = await this.chatSessionModel.findOne({
+        where: { id: sessionId },
+      });
+      const logs = await this.chatModel.findAll({
+        where: { chat_session_id: Number(sessionId) },
+        order: [['created_at', 'ASC']],
+      });
+      return { logs, chat_session: chatSession };
+    } else {
+      // No session, create one
+      chatSession = await this.chatSessionModel.create({
+        host_id: request.user_id,
+        status: 1,
+      });
+      await this.chatUsersModel.bulkCreate([
+        {
+          chat_session_id: chatSession.id,
+          user_id: request.user_id,
+          viewed: 0,
+        },
+        {
+          chat_session_id: chatSession.id,
+          user_id: request.other_user_id,
+          viewed: 0,
+        },
+      ]);
+      return { logs: [], chat_session: chatSession };
+    }
   };
 
   delete = async (request: DeleteDTO): Promise<boolean> => {
@@ -201,21 +247,5 @@ export class ChatService {
     if (chatViewed) return true;
 
     return false;
-  };
-
-  getUsers = () => {
-    return this.userModel.findAll({
-      include: [
-        {
-          model: Level,
-          attributes: ['name'],
-        },
-        {
-          model: Person,
-          attributes: ['id', 'name', 'lastname'],
-        },
-      ],
-      attributes: ['id', 'photo'],
-    });
   };
 }
