@@ -29,10 +29,10 @@ export class SocketController {
 
   // Chat
   @SubscribeMessage(SocketEvents.NEW_MESSAGE)
-  onNewMessage(client, data: SocketNewChatMessage) {
-    console.log(data, ' RECEIVED');
-    this.socketService.newMessage(data);
-    return { data };
+  async onNewMessage(client, data: SocketNewChatMessage) {
+    const newData = await this.socketService.newMessage(data);
+    this.server.emit(SocketEvents.NEW_MESSAGE, newData);
+    return { data: newData };
   }
 
   @SubscribeMessage('test')
