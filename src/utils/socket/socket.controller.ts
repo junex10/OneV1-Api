@@ -8,7 +8,11 @@ import {
 import { Socket, Server } from 'socket.io';
 import SocketEvents from './socket.events';
 import { SocketService } from './socket.service';
-import { SocketCoordinates, SocketNewChatMessage } from './socket.entity';
+import {
+  SocketCoordinates,
+  SocketNewChatMessage,
+  SocketNewPicChatMessage,
+} from './socket.entity';
 
 const HEADERS = {
   Accept: 'application/json',
@@ -32,6 +36,13 @@ export class SocketController {
   async onNewMessage(client, data: SocketNewChatMessage) {
     const newData = await this.socketService.newMessage(data);
     this.server.emit(SocketEvents.NEW_MESSAGE, newData);
+    return { data: newData };
+  }
+
+  @SubscribeMessage(SocketEvents.NEW_PIC_MESSAGE)
+  async onNewPicMessage(client, data: SocketNewPicChatMessage) {
+    const newData = await this.socketService.newPicMessage(data);
+    this.server.emit(SocketEvents.NEW_PIC_MESSAGE, newData);
     return { data: newData };
   }
 

@@ -1,16 +1,21 @@
-import { Column, Model, Table, CreatedAt, UpdatedAt, DeletedAt, BelongsTo, HasMany } from "sequelize-typescript";
 import {
-  User,
-  ChatSession,
-} from '.';
+  Column,
+  Model,
+  Table,
+  CreatedAt,
+  UpdatedAt,
+  DeletedAt,
+  BelongsTo,
+  HasMany,
+} from 'sequelize-typescript';
+import { User, ChatSession } from '.';
 
 @Table({
   timestamps: true,
   paranoid: true,
-  tableName: 'chats'
+  tableName: 'chats',
 })
 export class Chats extends Model {
-
   @BelongsTo(() => ChatSession, 'chat_session_id')
   chat_session: ChatSession;
 
@@ -25,6 +30,9 @@ export class Chats extends Model {
 
   @Column
   message: string;
+
+  @Column
+  attachment: string;
 
   @CreatedAt
   @Column
