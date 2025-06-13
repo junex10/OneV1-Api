@@ -5,10 +5,16 @@ export class SetFriendsDTO {
   sender_id: number;
   @ApiProperty({ required: true })
   receiver_id: number;
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   status: number;
 }
 export class GetFriendsDTO {
   @ApiProperty({ required: true })
   user_id: number;
+}
+export class CheckFriendSubscriptionDTO {
+  @ApiProperty({ required: true })
+  user_id: number;
+  @ApiProperty({ required: true })
+  friend_id: number;
 }

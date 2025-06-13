@@ -59,9 +59,8 @@ module.exports = {
       DISABLED: 0,
     },
     FRIENDS: {
-      PENDING: 1,
-      ACCEPTED: 2,
-      REJECTED: 3,
+      FOLLOWED: 1,
+      BLOCKED: 2,
     },
   },
   CHATS: {

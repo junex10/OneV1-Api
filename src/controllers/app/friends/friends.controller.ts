@@ -13,7 +13,11 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
-import { SetFriendsDTO, GetFriendsDTO } from './friends.entity';
+import {
+  SetFriendsDTO,
+  GetFriendsDTO,
+  CheckFriendSubscriptionDTO,
+} from './friends.entity';
 import { AppFriendsService } from './friends.service';
 
 @ApiTags('App - Friends')
@@ -46,6 +50,29 @@ export class AppFriendsController {
   async getFriends(@Body() request: GetFriendsDTO, @Res() response: Response) {
     try {
       const friends = await this.mapService.getFriends(request);
+
+      if (!friends)
+        return response
+          .status(HttpStatus.UNPROCESSABLE_ENTITY)
+          .json({ error: 'Connection error, please try again' });
+
+      return response.status(HttpStatus.OK).json({
+        friends,
+      });
+    } catch (e) {
+      throw new UnprocessableEntityException(
+        'Connection error, please try again',
+        e.message,
+      );
+    }
+  }
+  @Post('/checkFriendSubscription')
+  async checkFriendSubscription(
+    @Body() request: CheckFriendSubscriptionDTO,
+    @Res() response: Response,
+  ) {
+    try {
+      const friends = await this.mapService.checkFriendSubscription(request);
 
       if (!friends)
         return response

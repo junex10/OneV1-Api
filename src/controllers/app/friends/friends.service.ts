@@ -2,7 +2,11 @@ import { Injectable, Body } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { InjectModel } from '@nestjs/sequelize';
 import { User, Person, Friends } from 'src/models';
-import { SetFriendsDTO, GetFriendsDTO } from './friends.entity';
+import {
+  SetFriendsDTO,
+  GetFriendsDTO,
+  CheckFriendSubscriptionDTO,
+} from './friends.entity';
 import { Constants, Globals } from 'src/utils';
 import { Sequelize, Op } from 'sequelize';
 
@@ -17,12 +21,32 @@ export class AppFriendsService {
 
   async setFriend(@Body() request: SetFriendsDTO) {
     try {
-      const friend = await this.friendModel.create({
-        sender_id: request.sender_id, // -> The current user who is sending petition to be friends
-        receiver_id: request.receiver_id, // -> Receiver who will get the notification and decide if he/she wants to be friends with sender
-        status: Constants.USER.FRIENDS.PENDING,
+      // Check for existing friendship (in either direction) that is not BLOCKED
+      const existing = await this.friendModel.findOne({
+        where: {
+          [Op.or]: [
+            { sender_id: request.sender_id, receiver_id: request.receiver_id },
+            { sender_id: request.receiver_id, receiver_id: request.sender_id },
+          ],
+          status: { [Op.ne]: Constants.USER.FRIENDS.BLOCKED },
+        },
       });
-      if (friend) return friend;
+      let friend;
+      if (existing) {
+        // Delete the existing log
+        await existing.destroy();
+      } else {
+        // Create new friendship with FOLLOWED status
+        friend = await this.friendModel.create({
+          sender_id: request.sender_id,
+          receiver_id: request.receiver_id,
+          status: Constants.USER.FRIENDS.FOLLOWED,
+        });
+        if (friend) return friend;
+      }
+      return {
+        result: false, // We unfollowed him
+      };
     } catch (e) {
       return null;
     }
@@ -33,7 +57,7 @@ export class AppFriendsService {
     try {
       const friends = await this.friendModel.findAndCountAll({
         where: {
-          status: Constants.USER.FRIENDS.ACCEPTED,
+          // status: Constants.USER.FRIENDS.FOLLOWED,
           [Op.or]: [
             { sender_id: request.user_id },
             { receiver_id: request.user_id },
@@ -60,6 +84,26 @@ export class AppFriendsService {
       });
 
       return { count: friendList.length, friends: friendList };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async checkFriendSubscription(request: CheckFriendSubscriptionDTO) {
+    try {
+      const friend = await this.friendModel.findOne({
+        where: {
+          [Op.or]: [
+            { sender_id: request.user_id, receiver_id: request.friend_id },
+            { sender_id: request.friend_id, receiver_id: request.user_id },
+          ],
+          status: Constants.USER.FRIENDS.FOLLOWED,
+        },
+      });
+      if (friend) return { result: true };
+      else {
+        return { result: false };
+      }
     } catch (e) {
       return null;
     }
