@@ -32,9 +32,27 @@ export class AppFriendsService {
         },
       });
       let friend;
+      const person = await this.personModel.findOne({
+        where: {
+          user_id: request.receiver_id,
+        },
+      });
+      const subscribers = person?.subscribers ? Number(person?.subscribers) : 0;
+      const calc = existing ? subscribers - 1 : subscribers + 1;
+
       if (existing) {
         // Delete the existing log
         await existing.destroy();
+        await this.personModel.update(
+          {
+            subscribers: subscribers - 1,
+          },
+          {
+            where: {
+              user_id: request.receiver_id,
+            },
+          },
+        );
       } else {
         // Create new friendship with FOLLOWED status
         friend = await this.friendModel.create({
@@ -42,10 +60,26 @@ export class AppFriendsService {
           receiver_id: request.receiver_id,
           status: Constants.USER.FRIENDS.FOLLOWED,
         });
-        if (friend) return friend;
+
+        await this.personModel.update(
+          {
+            subscribers: subscribers + 1,
+          },
+          {
+            where: {
+              user_id: request.receiver_id,
+            },
+          },
+        );
+        if (friend)
+          return {
+            friend,
+            subscribers: calc,
+          };
       }
       return {
         result: false, // We unfollowed him
+        subscribers: calc,
       };
     } catch (e) {
       return null;
