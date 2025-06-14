@@ -34,63 +34,6 @@ export class AppAuthService {
     private mailerService: MailerService,
   ) {}
 
-  private hashPic = (fileName: string, mimeType: string) => {
-    let format = '';
-    switch (mimeType) {
-      case 'image/jpeg':
-        format = 'jpg';
-        break;
-
-      case 'image/png':
-        format = 'png';
-        break;
-
-      case 'image/png':
-        format = 'png';
-        break;
-
-      case 'video/mp4':
-        format = 'mp4';
-        break;
-
-      case 'video/x-msvideo':
-        format = 'avi';
-        break;
-
-      case 'video/x-ms-wmv':
-        format = 'wmv';
-        break;
-
-      case 'video/quicktime':
-        format = 'mov';
-        break;
-
-      case 'video/3gpp':
-        format = '3gp';
-        break;
-
-      case 'video/x-flv':
-        format = 'flv';
-        break;
-
-      case 'image/gif':
-        format = 'gif';
-        break;
-
-      case 'application/pdf':
-        format = 'pdf';
-        break;
-
-      default:
-        format = 'jpg';
-        break;
-    }
-    return `${Hash.makeSync(fileName + moment().format('YYYYMMDDHHmmss'))
-      .replace(/\//g, '')
-      .replace(/\./g, '')
-      .replace(/,/g, '')}.${format}`;
-  };
-
   findUserVerified = async (username: string) => {
     const person = await this.personModel.findOne({
       where: {
@@ -201,7 +144,7 @@ export class AppAuthService {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    const hashedFileName = this.hashPic(photo?.fileName, photo?.mimeType);
+    const hashedFileName = Globals.hashPic(photo?.fileName, photo?.mimeType);
     const filePath = path.join(dir, hashedFileName);
     fs.writeFileSync(filePath, Buffer.from(photo.base64, 'base64'));
 
