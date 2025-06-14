@@ -21,14 +21,9 @@ export class AppProfileController {
   constructor(private readonly profileService: AppProfileService) {}
 
   @Post('/update')
-  @UseInterceptors(FileInterceptor('photo', UploadFile('users')))
-  async update(
-    @Body() request: UpdateUserDTO,
-    @Res() response: Response,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
+  async update(@Body() request: UpdateUserDTO, @Res() response: Response) {
     try {
-      const user = await this.profileService.update(request, file);
+      const user = await this.profileService.update(request);
       const permissions = user.level.permissions;
       const userFilter = {
         id: user.id,

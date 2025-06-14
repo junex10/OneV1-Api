@@ -1,4 +1,5 @@
 import * as moment from 'moment';
+import Hash from './hash';
 
 class Globals {
   formatMiles = (n: any, decimals: boolean = true, currency: string = '$') => {
@@ -36,5 +37,62 @@ class Globals {
     Math.floor(Math.random() * (max - min)) + min;
 
   codeGenerater = () => Math.floor(100000 + Math.random() * 900000);
+
+  hashPic = (fileName: string, mimeType: string) => {
+    let format = '';
+    switch (mimeType) {
+      case 'image/jpeg':
+        format = 'jpg';
+        break;
+
+      case 'image/png':
+        format = 'png';
+        break;
+
+      case 'image/png':
+        format = 'png';
+        break;
+
+      case 'video/mp4':
+        format = 'mp4';
+        break;
+
+      case 'video/x-msvideo':
+        format = 'avi';
+        break;
+
+      case 'video/x-ms-wmv':
+        format = 'wmv';
+        break;
+
+      case 'video/quicktime':
+        format = 'mov';
+        break;
+
+      case 'video/3gpp':
+        format = '3gp';
+        break;
+
+      case 'video/x-flv':
+        format = 'flv';
+        break;
+
+      case 'image/gif':
+        format = 'gif';
+        break;
+
+      case 'application/pdf':
+        format = 'pdf';
+        break;
+
+      default:
+        format = 'jpg';
+        break;
+    }
+    return `${Hash.makeSync(fileName + moment().format('YYYYMMDDHHmmss'))
+      .replace(/\//g, '')
+      .replace(/\./g, '')
+      .replace(/,/g, '')}.${format}`;
+  };
 }
 export default new Globals();

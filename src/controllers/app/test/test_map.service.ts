@@ -22,7 +22,7 @@ export class AppTestMapService {
       const data = request?.places.map((item: any, index: number) => {
         return {
           event_type_id: 1, // -> Party ID
-          user_id: 15, // Test user number
+          user_id: 5, // Test user number
           main_pic: null,
           content: `PARTY TEST ${index}`,
           latitude: item?.location?.lat.toString(),

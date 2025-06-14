@@ -375,14 +375,4 @@ export class AppAuthService {
 
     return updated;
   };
-
-  private generateURL = async () => {
-    let numbers = '';
-    const min: number = 0;
-    const max: number = 9;
-    for (let x = 0; x < 6; x++) {
-      numbers += (Math.floor(Math.random() * (max - min)) + min).toString();
-    }
-    return `verify/${Globals.filterByUrl(await Hash.make(numbers))}`;
-  };
 }

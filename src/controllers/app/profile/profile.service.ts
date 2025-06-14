@@ -4,6 +4,7 @@ import { Level, Person, User } from 'src/models';
 import { Constants, Hash, Globals } from 'src/utils';
 import { UpdateUserDTO } from './profile.entity';
 import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class AppProfileService {
@@ -12,16 +13,32 @@ export class AppProfileService {
     @InjectModel(Person) private personModel: typeof Person,
   ) {}
 
-  update = async (request: UpdateUserDTO, file: Express.Multer.File) => {
+  update = async (request: UpdateUserDTO) => {
     const user = await this.userModel.findOne({ where: { id: request.id } });
-    if (file !== undefined && user?.photo !== null) {
+
+    if (request?.photo !== undefined && user?.photo !== null) {
       const PATH = `./public/storage/${user?.photo}`;
       if (fs.existsSync(PATH)) fs.unlinkSync(PATH);
     }
+
+    const dir = path.resolve(process.cwd(), 'public', 'storage', 'users');
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    const hashedFileName = Globals.hashPic(
+      request.photo?.fileName,
+      request.photo?.mimeType,
+    );
+    const filePath = path.join(dir, hashedFileName);
+    fs.writeFileSync(filePath, Buffer.from(request.photo.base64, 'base64'));
+
     const update = await this.userModel.update(
       {
         email: request.email,
-        photo: file !== undefined ? 'users/' + file.filename : user?.photo,
+        photo:
+          request?.photo !== undefined
+            ? `users/${hashedFileName}`
+            : user?.photo,
         level_id: request.level_id ?? user.level_id,
       },
       {

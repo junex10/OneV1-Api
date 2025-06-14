@@ -35,5 +35,6 @@ export class UpdateUserDTO {
   @ApiProperty()
   address?: string;
 
+  @ApiProperty()
   photo?: any;
 }
