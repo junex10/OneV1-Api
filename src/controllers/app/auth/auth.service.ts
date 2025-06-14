@@ -18,6 +18,8 @@ import {
   CheckCode,
 } from './auth.entity';
 import { Constants, Hash, Globals, JWTAuth } from 'src/utils';
+import * as fs from 'fs';
+import * as path from 'path';
 import * as moment from 'moment';
 
 @Injectable()
@@ -31,6 +33,63 @@ export class AppAuthService {
     @InjectModel(UsersCode) private usersCodeModel: typeof UsersCode,
     private mailerService: MailerService,
   ) {}
+
+  private hashPic = (fileName: string, mimeType: string) => {
+    let format = '';
+    switch (mimeType) {
+      case 'image/jpeg':
+        format = 'jpg';
+        break;
+
+      case 'image/png':
+        format = 'png';
+        break;
+
+      case 'image/png':
+        format = 'png';
+        break;
+
+      case 'video/mp4':
+        format = 'mp4';
+        break;
+
+      case 'video/x-msvideo':
+        format = 'avi';
+        break;
+
+      case 'video/x-ms-wmv':
+        format = 'wmv';
+        break;
+
+      case 'video/quicktime':
+        format = 'mov';
+        break;
+
+      case 'video/3gpp':
+        format = '3gp';
+        break;
+
+      case 'video/x-flv':
+        format = 'flv';
+        break;
+
+      case 'image/gif':
+        format = 'gif';
+        break;
+
+      case 'application/pdf':
+        format = 'pdf';
+        break;
+
+      default:
+        format = 'jpg';
+        break;
+    }
+    return `${Hash.makeSync(fileName + moment().format('YYYYMMDDHHmmss'))
+      .replace(/\//g, '')
+      .replace(/\./g, '')
+      .replace(/,/g, '')}.${format}`;
+  };
 
   findUserVerified = async (username: string) => {
     const person = await this.personModel.findOne({
@@ -135,12 +194,22 @@ export class AppAuthService {
     }
   }
 
-  async createUser(@Body() request: RegisterParams, file: Express.Multer.File) {
+  async createUser(@Body() request: RegisterParams) {
+    const { photo } = request;
+
+    const dir = path.resolve(process.cwd(), 'public', 'storage', 'users');
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    const hashedFileName = this.hashPic(photo?.fileName, photo?.mimeType);
+    const filePath = path.join(dir, hashedFileName);
+    fs.writeFileSync(filePath, Buffer.from(photo.base64, 'base64'));
+
     const user = await this.userModel.create({
       email: request.email,
       password: Hash.makeSync(request.password),
       level_id: request.level_id || Constants.LEVELS.USER,
-      photo: file ? 'users/' + file.filename : null,
+      photo: photo ? `users/${hashedFileName}` : null,
       token: null, // We should remove this in future updates
       verified: Constants.USER.USER_VERIFIED.NO_VERIFIED,
       status: Constants.USER.USER_VERIFIED.NO_VERIFIED,

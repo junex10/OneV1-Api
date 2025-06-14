@@ -48,6 +48,9 @@ export class RegisterParams {
 
   @ApiProperty()
   verified?: number;
+
+  @ApiProperty()
+  photo: any;
 }
 
 export class RecoverParams {

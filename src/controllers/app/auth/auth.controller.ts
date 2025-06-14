@@ -77,12 +77,7 @@ export class AppAuthController {
   }
 
   @Post('/register')
-  @UseInterceptors(FileInterceptor('photo', UploadFile('users')))
-  async register(
-    @Body() request: RegisterParams,
-    @Res() response: Response,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
+  async register(@Body() request: RegisterParams, @Res() response: Response) {
     try {
       if (request.password != request.password_confirmation) {
         return response.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
@@ -98,7 +93,7 @@ export class AppAuthController {
         });
       }
 
-      const user = await this.authService.createUser(request, file);
+      const user = await this.authService.createUser(request);
 
       return response.status(HttpStatus.OK).json({
         user,
