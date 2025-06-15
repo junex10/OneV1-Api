@@ -41,10 +41,7 @@ export class ChatService {
         include: [
           {
             model: User,
-            attributes: ['email', 'id', 'photo'],
-            include: [
-              { model: Person, attributes: ['name', 'lastname', 'username'] },
-            ],
+            include: [{ model: Person }],
           },
           'chat_session',
         ],
@@ -62,11 +59,11 @@ export class ChatService {
 
       if (lastMessage?.sender_id === request.user_id) {
         last = lastMessage?.message
-          ? lastMessage.message
+          ? `You: ${lastMessage.message}`
           : `You: sent a picture`;
       } else {
         last = lastMessage?.message
-          ? lastMessage.message
+          ? `${otherUser?.sender?.person?.username}: ${lastMessage.message}`
           : `${otherUser?.sender?.person?.username}: sent a picture`;
       }
 
