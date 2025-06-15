@@ -7,7 +7,6 @@ import {
   GetChatsDTO,
   GetLogsDTO,
   NewChatDTO,
-  NewMessageDTO,
   ViewedDTO,
 } from './chat.entity';
 import { Constants, Globals } from 'src/utils';
@@ -24,43 +23,58 @@ export class ChatService {
   ) {}
 
   getChats = async (request: GetChatsDTO) => {
-    const chats = await this.chatUsersModel.findAll({
-      where: {
-        user_id: request.user_id,
-      },
+    // 1. Find all chat sessions for the user
+    const userSessions = await this.chatUsersModel.findAll({
+      where: { user_id: request.user_id },
       include: [{ model: ChatSession }],
     });
-    const sessions = chats.map((item) => item.chat_session.id);
-    const getOtherUser = await this.chatUsersModel.findAll({
-      where: {
-        user_id: {
-          [Op.ne]: request.user_id,
-        },
-        chat_session_id: {
-          [Op.in]: sessions,
-        },
-      },
-      include: [
-        {
-          model: User,
-          attributes: ['email', 'id', 'photo'],
-          include: [{ model: Person, attributes: ['name', 'lastname'] }],
-        },
-        'chat_session',
-      ],
-    });
 
-    let data = [];
-    for await (const item of getOtherUser) {
+    // 2. Get unique session IDs
+    const sessionIds = userSessions.map((item) => item.chat_session.id);
+
+    // 3. For each session, get the last message and the other user(s)
+    const data = [];
+    for (const sessionId of sessionIds) {
+      // Find all users in this session
+      const sessionUsers = await this.chatUsersModel.findAll({
+        where: { chat_session_id: sessionId },
+        include: [
+          {
+            model: User,
+            attributes: ['email', 'id', 'photo'],
+            include: [
+              { model: Person, attributes: ['name', 'lastname', 'username'] },
+            ],
+          },
+          'chat_session',
+        ],
+      });
+
+      // Get the last message for this session
       const lastMessage = await this.chatModel.findOne({
-        where: {
-          chat_session_id: item.chat_session.id,
-        },
+        where: { chat_session_id: sessionId },
         order: [['id', 'desc']],
       });
+
+      // Find the "other" user (not the current user)
+      const otherUser = sessionUsers.find((u) => u.user_id !== request.user_id);
+      let last: string;
+
+      if (lastMessage?.sender_id === request.user_id) {
+        last = lastMessage?.message
+          ? lastMessage.message
+          : `You: sent a picture`;
+      } else {
+        last = lastMessage?.message
+          ? lastMessage.message
+          : `${otherUser?.sender?.person?.username}: sent a picture`;
+      }
+
       data.push({
-        item,
-        lastMessage: lastMessage?.message,
+        sessionId,
+        otherUser: otherUser ? otherUser.sender : null,
+        lastLog: lastMessage,
+        lastMessage: last,
         lastDateMessage: lastMessage?.created_at,
       });
     }
@@ -114,37 +128,6 @@ export class ChatService {
       });
 
       return chatSession;
-    }
-    return null;
-  };
-
-  newMessage = async (request: NewMessageDTO, files: Express.Multer.File[]) => {
-    const chat = await this.chatModel.create({
-      chat_session_id: request.session_id,
-      sender_id: request.sender_id,
-      message: request.message,
-    });
-    if (chat) {
-      if (files.length > 0) {
-        const attachment = files.map((item) => ({
-          chat_id: chat.id,
-          attachment: `chat/${item.filename}`,
-        }));
-      }
-      await this.chatUsersModel.update(
-        {
-          viewed: Constants.CHATS.VIEWED.UNREAD,
-        },
-        {
-          where: {
-            chat_session_id: request.session_id,
-            user_id: {
-              [Op.ne]: request.sender_id,
-            },
-          },
-        },
-      );
-      return chat;
     }
     return null;
   };

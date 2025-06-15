@@ -19,7 +19,7 @@ const HEADERS = {
   'Content-Type': 'application/json',
 };
 
-@WebSocketGateway({ cors: { origin: '*' } })
+@WebSocketGateway({ cors: { origin: '*' }, maxHttpBufferSize: 5e6 })
 export class SocketController {
   @WebSocketServer() server: Server;
 

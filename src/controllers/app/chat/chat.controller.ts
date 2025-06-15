@@ -16,7 +16,6 @@ import { ApiTags } from '@nestjs/swagger';
 import {
   GetChatsDTO,
   NewChatDTO,
-  NewMessageDTO,
   GetLogsDTO,
   DeleteDTO,
   ViewedDTO,
@@ -51,31 +50,6 @@ export class ChatController {
       if (chats !== null) {
         return response.status(HttpStatus.OK).json({
           chats,
-        });
-      }
-      return response.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
-        error: 'Could not create the chat',
-      });
-    } catch (e) {
-      throw new UnprocessableEntityException(
-        'A connection error has occurred, please try again',
-        e.message,
-      );
-    }
-  }
-
-  @Post('newMessage')
-  @UseInterceptors(FilesInterceptor('attachments', 5, UploadFile('chat')))
-  async newMessage(
-    @Res() response: Response,
-    @Body() request: NewMessageDTO,
-    @UploadedFiles() files: Express.Multer.File[],
-  ) {
-    try {
-      const message = await this.chatService.newMessage(request, files);
-      if (message) {
-        return response.status(HttpStatus.OK).json({
-          message,
         });
       }
       return response.status(HttpStatus.UNPROCESSABLE_ENTITY).json({

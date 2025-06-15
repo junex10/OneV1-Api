@@ -12,15 +12,6 @@ export class NewChatDTO {
   @ApiProperty()
   receiver_id?: number;
 }
-export class NewMessageDTO {
-  @ApiProperty()
-  sender_id: number;
-  @ApiProperty()
-  message: string;
-  @ApiProperty()
-  session_id: number;
-  attachments?: [];
-}
 export class GetLogsDTO {
   @ApiProperty()
   user_id: number;

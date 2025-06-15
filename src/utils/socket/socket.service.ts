@@ -13,6 +13,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import Hash from '../hash';
 import * as moment from 'moment';
+import { Globals } from '..';
 
 @Injectable()
 export class SocketService {
@@ -59,63 +60,6 @@ export class SocketService {
     return { logs, chat_session: chatSession };
   };
 
-  private hashPic = (fileName: string, mimeType: string) => {
-    let format = '';
-    switch (mimeType) {
-      case 'image/jpeg':
-        format = 'jpg';
-        break;
-
-      case 'image/png':
-        format = 'png';
-        break;
-
-      case 'image/png':
-        format = 'png';
-        break;
-
-      case 'video/mp4':
-        format = 'mp4';
-        break;
-
-      case 'video/x-msvideo':
-        format = 'avi';
-        break;
-
-      case 'video/x-ms-wmv':
-        format = 'wmv';
-        break;
-
-      case 'video/quicktime':
-        format = 'mov';
-        break;
-
-      case 'video/3gpp':
-        format = '3gp';
-        break;
-
-      case 'video/x-flv':
-        format = 'flv';
-        break;
-
-      case 'image/gif':
-        format = 'gif';
-        break;
-
-      case 'application/pdf':
-        format = 'pdf';
-        break;
-
-      default:
-        format = 'jpg';
-        break;
-    }
-    return `${Hash.makeSync(fileName + moment().format('YYYYMMDDHHmmss'))
-      .replace(/\//g, '')
-      .replace(/\./g, '')
-      .replace(/,/g, '')}.${format}`;
-  };
-
   setUserLocation = async (coordinates: SocketCoordinates) => {
     await this.personModel.update(
       {
@@ -150,7 +94,7 @@ export class SocketService {
       fs.mkdirSync(dir, { recursive: true });
     }
     // Use hashed filename for saving
-    const hashedFileName = this.hashPic(
+    const hashedFileName = Globals.hashPic(
       attachment?.fileName,
       attachment?.mimeType,
     );
