@@ -54,6 +54,12 @@ export class Events extends Model {
   status: number;
 
   @Column
+  starting_event: Date;
+
+  @Column
+  users_joined: number;
+
+  @Column
   expiration_time: Date;
 
   @CreatedAt

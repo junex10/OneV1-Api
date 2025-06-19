@@ -1,7 +1,13 @@
 import { Injectable, Body } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { InjectModel } from '@nestjs/sequelize';
-import { User, Person, Events, EventsType } from 'src/models';
+import {
+  User,
+  Person,
+  Events,
+  EventsType,
+  EventsUsersJoined,
+} from 'src/models';
 import {
   GetEventDTO,
   GetEventsByUserDTO,
@@ -20,6 +26,8 @@ export class AppEventsService {
     @InjectModel(Person) private personModel: typeof Person,
     @InjectModel(Events) private eventModel: typeof Events,
     @InjectModel(EventsType) private eventTypeModel: typeof EventsType,
+    @InjectModel(EventsUsersJoined)
+    private eventsUsersJoined: typeof EventsUsersJoined,
     private readonly http: HttpService,
   ) {}
 
