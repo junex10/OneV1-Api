@@ -1,7 +1,7 @@
 import { Injectable, Body } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { InjectModel } from '@nestjs/sequelize';
-import { User, Person, Events } from 'src/models';
+import { User, Person, Events, EventsType } from 'src/models';
 import {
   GetEventDTO,
   GetEventsByUserDTO,
@@ -9,7 +9,7 @@ import {
   SetEventDTO,
 } from './event.entity';
 import { Constants, Globals } from 'src/utils';
-import { Sequelize } from 'sequelize';
+import { Op, Sequelize } from 'sequelize';
 
 const GOOGLE_API = process.env.GOOGLE_API;
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
@@ -19,6 +19,7 @@ export class AppEventsService {
   constructor(
     @InjectModel(Person) private personModel: typeof Person,
     @InjectModel(Events) private eventModel: typeof Events,
+    @InjectModel(EventsType) private eventTypeModel: typeof EventsType,
     private readonly http: HttpService,
   ) {}
 
@@ -53,11 +54,13 @@ export class AppEventsService {
   }
 
   async getEvents(@Body() request: GetEventsDTO) {
-    const radius = 10000; // Value in meters
-    const excludeRadius = 10;
+    const radius = 80000; // Value in meters
+    const excludeRadius = 5;
     try {
-      const data = await this.eventModel.findAll({
-        where: Sequelize.literal(`
+      let data;
+      if (!request.search) {
+        data = await this.eventModel.findAll({
+          where: Sequelize.literal(`
           (
             6371000 * acos(
               cos(radians(${request.latitude}))
@@ -77,7 +80,75 @@ export class AppEventsService {
             )
           ) >= ${excludeRadius}
         `),
-      });
+        });
+      } else {
+        // Try to detect event type by name (case-insensitive LIKE)
+        const eventType = await this.eventTypeModel.findOne({
+          where: {
+            name: { [Op.like]: `%${request.search}%` },
+          },
+        });
+
+        if (eventType) {
+          // If event type found, filter by event_type_id
+          data = await this.eventModel.findAll({
+            where: {
+              [Op.and]: [
+                Sequelize.literal(`
+            (
+              6371000 * acos(
+                cos(radians(${request.latitude}))
+                * cos(radians(CAST(latitude AS DECIMAL(10,7))))
+                * cos(radians(CAST(longitude AS DECIMAL(10,7))) - radians(${request.longitude}))
+                + sin(radians(${request.latitude}))
+                * sin(radians(CAST(latitude AS DECIMAL(10,7))))
+              )
+            ) < ${radius}
+            AND (
+              6371000 * acos(
+                cos(radians(${request.latitude}))
+                * cos(radians(CAST(latitude AS DECIMAL(10,7))))
+                * cos(radians(CAST(longitude AS DECIMAL(10,7))) - radians(${request.longitude}))
+                + sin(radians(${request.latitude}))
+                * sin(radians(CAST(latitude AS DECIMAL(10,7))))
+              )
+            ) >= ${excludeRadius}
+          `),
+                { event_type_id: eventType.id },
+              ],
+            },
+          });
+        } else {
+          // If not found, search by address, content, or description
+          data = await this.eventModel.findAll({
+            where: {
+              [Op.and]: [
+                Sequelize.literal(`
+            (
+              6371000 * acos(
+                cos(radians(${request.latitude}))
+                * cos(radians(CAST(latitude AS DECIMAL(10,7))))
+                * cos(radians(CAST(longitude AS DECIMAL(10,7))) - radians(${request.longitude}))
+                + sin(radians(${request.latitude}))
+                * sin(radians(CAST(latitude AS DECIMAL(10,7))))
+              )
+            ) < ${radius}
+            AND (
+              6371000 * acos(
+                cos(radians(${request.latitude}))
+                * cos(radians(CAST(latitude AS DECIMAL(10,7))))
+                * cos(radians(CAST(longitude AS DECIMAL(10,7))) - radians(${request.longitude}))
+                + sin(radians(${request.latitude}))
+                * sin(radians(CAST(latitude AS DECIMAL(10,7))))
+              )
+            ) >= ${excludeRadius}
+          `),
+                { address: { [Op.like]: `%${request.search}%` } },
+              ],
+            },
+          });
+        }
+      }
 
       return data;
     } catch (e) {

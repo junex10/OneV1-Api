@@ -25,6 +25,8 @@ export class GetEventsDTO {
   latitude: number;
   @ApiProperty({ required: true })
   longitude: number;
+  @ApiProperty({ required: false })
+  search: string;
 }
 
 export class GetEventDTO {
