@@ -21,16 +21,20 @@ export class AppProfileService {
       if (fs.existsSync(PATH)) fs.unlinkSync(PATH);
     }
 
-    const dir = path.resolve(process.cwd(), 'public', 'storage', 'users');
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+    let hashedFileName;
+
+    if (request?.photo) {
+      const dir = path.resolve(process.cwd(), 'public', 'storage', 'users');
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      hashedFileName = Globals.hashPic(
+        request.photo?.fileName,
+        request.photo?.mimeType,
+      );
+      const filePath = path.join(dir, hashedFileName);
+      fs.writeFileSync(filePath, Buffer.from(request.photo.base64, 'base64'));
     }
-    const hashedFileName = Globals.hashPic(
-      request.photo?.fileName,
-      request.photo?.mimeType,
-    );
-    const filePath = path.join(dir, hashedFileName);
-    fs.writeFileSync(filePath, Buffer.from(request.photo.base64, 'base64'));
 
     const update = await this.userModel.update(
       {
