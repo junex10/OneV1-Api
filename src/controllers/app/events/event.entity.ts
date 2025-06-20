@@ -2,6 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class SetEventDTO {
   @ApiProperty({ required: true })
+  title: string;
+  @ApiProperty({ required: true })
   user_id: number;
   @ApiProperty({ required: true })
   event_type_id: number;
@@ -19,6 +21,10 @@ export class SetEventDTO {
   status: number;
   @ApiProperty({ required: false })
   expiration_time: number;
+  @ApiProperty({ required: false })
+  users_joined: number;
+  @ApiProperty({ required: false })
+  starting_event: Date;
 }
 export class GetEventsDTO {
   @ApiProperty({ required: true })

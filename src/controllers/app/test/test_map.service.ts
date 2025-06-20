@@ -24,6 +24,7 @@ export class AppTestMapService {
           event_type_id: 1, // -> Party ID
           user_id: 5, // Test user number
           main_pic: null,
+          title: `TEST TITLE ${index}`,
           content: `PARTY TEST ${index}`,
           latitude: item?.location?.lat.toString(),
           longitude: item?.location?.lng.toString(),

@@ -6,10 +6,18 @@ import {
   UpdatedAt,
   DeletedAt,
   BelongsTo,
+  DefaultScope,
 } from 'sequelize-typescript';
 import { Events } from './events';
 import { User } from './user';
 
+@DefaultScope(() => ({
+  include: [
+    {
+      model: User,
+    },
+  ],
+}))
 @Table({
   timestamps: true,
   paranoid: true,

@@ -7,8 +7,9 @@ import {
   DeletedAt,
   BelongsTo,
   DefaultScope,
+  HasMany,
 } from 'sequelize-typescript';
-import { EventsType, User } from '.';
+import { EventsType, EventsUsersJoined, User } from '.';
 
 @DefaultScope(() => ({
   include: [
@@ -31,6 +32,12 @@ export class Events extends Model {
 
   @BelongsTo(() => User, 'user_id')
   user: User;
+
+  @HasMany(() => EventsUsersJoined, 'event_id')
+  users_joined_event: EventsUsersJoined;
+
+  @Column
+  title: string;
 
   @Column
   main_pic: string;

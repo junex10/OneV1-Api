@@ -48,6 +48,7 @@ export default {
     TESTING: '/test',
   },
   EVENT_STATUS: {
+    PENDING: 0, // -> Schedule to start later, not started
     ACTIVE: 1,
     ALMOST_FINISHED: 2,
     FINISHED: 3,

@@ -37,12 +37,14 @@ export class AppEventsService {
       const data = {
         ...request,
         main_pic: request?.main_pic
-          ? request?.main_pic
+          ? request.main_pic
           : `${process.env.BASE_URL}/img/random_location.jpg`,
         latitude: request?.latitude.toString(),
         longitude: request?.longitude.toString(),
-        likes: request.likes ? request.likes : 0,
-        status: request?.likes ? request?.likes : Constants.EVENT_STATUS.ACTIVE,
+        users_joined: request?.users_joined ? request.users_joined : 1, // -> Host is always the first user joined
+        status: request?.status
+          ? request.status
+          : Constants.EVENT_STATUS.ACTIVE,
         expiration_time: request?.expiration_time
           ? request?.expiration_time
           : new Date(Date.now() + 6 * 60 * 60 * 1000), // Default is 24 hours
@@ -54,7 +56,6 @@ export class AppEventsService {
         return data;
       }
 
-      // Add here business model logic later
       return null;
     } catch (e) {
       return null;
