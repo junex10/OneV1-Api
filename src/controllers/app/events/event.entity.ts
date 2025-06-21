@@ -8,7 +8,7 @@ export class SetEventDTO {
   @ApiProperty({ required: true })
   event_type_id: number;
   @ApiProperty({ required: true })
-  main_pic: string;
+  main_pic: any;
   @ApiProperty({ required: true })
   content: string;
   @ApiProperty({ required: true })
