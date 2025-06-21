@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+class Picture {
+  fileName: string | null | undefined;
+  mimeType: string | null | undefined;
+  base64: string | null | undefined;
+}
+
 export class SetEventDTO {
   @ApiProperty({ required: true })
   title: string;
@@ -8,7 +14,7 @@ export class SetEventDTO {
   @ApiProperty({ required: true })
   event_type_id: number;
   @ApiProperty({ required: true })
-  main_pic: any;
+  main_pic: Picture;
   @ApiProperty({ required: true })
   content: string;
   @ApiProperty({ required: true })
