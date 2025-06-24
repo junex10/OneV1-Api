@@ -17,6 +17,8 @@ import {
 } from './event.entity';
 import { Constants, Globals } from 'src/utils';
 import { Op, Sequelize } from 'sequelize';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const GOOGLE_API = process.env.GOOGLE_API;
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
@@ -35,10 +37,28 @@ export class AppEventsService {
   async setEvent(@Body() request: SetEventDTO) {
     try {
       // We create only 1 event
+      let hashedFileName;
+
+      if (request.main_pic) {
+        const dir = path.resolve(process.cwd(), 'public', 'storage', 'events');
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, { recursive: true });
+        }
+        hashedFileName = Globals.hashPic(
+          request.main_pic?.fileName,
+          request.main_pic?.mimeType,
+        );
+        const filePath = path.join(dir, hashedFileName);
+        fs.writeFileSync(
+          filePath,
+          Buffer.from(request.main_pic.base64, 'base64'),
+        );
+      }
+
       const data = {
         ...request,
         main_pic: request?.main_pic
-          ? request.main_pic
+          ? `events/${hashedFileName}`
           : `${process.env.BASE_URL}/img/random_location.jpg`,
         latitude: request?.latitude.toString(),
         longitude: request?.longitude.toString(),
@@ -46,6 +66,9 @@ export class AppEventsService {
         status: request?.status
           ? request.status
           : Constants.EVENT_STATUS.ACTIVE,
+        starting_event: request?.starting_event
+          ? request?.starting_event
+          : new Date(),
         expiration_time: request?.expiration_time
           ? request?.expiration_time
           : new Date(Date.now() + 6 * 60 * 60 * 1000), // Default is 24 hours
@@ -54,7 +77,12 @@ export class AppEventsService {
       const event = await this.eventModel.create(data);
 
       if (event) {
-        return data;
+        const getEvent = await this.eventModel.findOne({
+          where: {
+            id: event.id,
+          },
+        });
+        return getEvent;
       }
 
       return null;
