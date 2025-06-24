@@ -12,6 +12,7 @@ import {
   GetEventDTO,
   GetEventsByUserDTO,
   GetEventsDTO,
+  GetEventsTypeDTO,
   SetEventDTO,
 } from './event.entity';
 import { Constants, Globals } from 'src/utils';
@@ -189,6 +190,28 @@ export class AppEventsService {
         ],
         where: {
           user_id: request.user_id,
+        },
+      });
+      return data;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async getEventsType() {
+    try {
+      const data = await this.eventTypeModel.findAll();
+      return data;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async getEventsTypeById(@Body() request: GetEventsTypeDTO) {
+    try {
+      const data = await this.eventTypeModel.findOne({
+        where: {
+          id: request.event_type_id,
         },
       });
       return data;

@@ -26,7 +26,7 @@ export class SetEventDTO {
   @ApiProperty({ required: false })
   status: number;
   @ApiProperty({ required: false })
-  expiration_time: number;
+  expiration_time: Date;
   @ApiProperty({ required: false })
   users_joined: number;
   @ApiProperty({ required: false })
@@ -48,4 +48,8 @@ export class GetEventDTO {
 export class GetEventsByUserDTO {
   @ApiProperty({ required: true })
   user_id: number;
+}
+export class GetEventsTypeDTO {
+  @ApiProperty({ required: false })
+  event_type_id?: number;
 }

@@ -17,6 +17,7 @@ import {
   GetEventDTO,
   GetEventsByUserDTO,
   GetEventsDTO,
+  GetEventsTypeDTO,
   SetEventDTO,
 } from './event.entity';
 import { AppEventsService } from './events.service';
@@ -104,6 +105,50 @@ export class AppEventsController {
 
       return response.status(HttpStatus.OK).json({
         places,
+      });
+    } catch (e) {
+      throw new UnprocessableEntityException(
+        'Connection error, please try again',
+        e.message,
+      );
+    }
+  }
+
+  @Post('/getEventsType')
+  async getEventsType(@Res() response: Response) {
+    try {
+      const items = await this.mapService.getEventsType();
+
+      if (!items)
+        return response
+          .status(HttpStatus.UNPROCESSABLE_ENTITY)
+          .json({ error: 'Connection error, please try again' });
+
+      return response.status(HttpStatus.OK).json({
+        items,
+      });
+    } catch (e) {
+      throw new UnprocessableEntityException(
+        'Connection error, please try again',
+        e.message,
+      );
+    }
+  }
+  @Post('/getEventsTypeById')
+  async getEventsTypeById(
+    @Body() request: GetEventsTypeDTO,
+    @Res() response: Response,
+  ) {
+    try {
+      const item = await this.mapService.getEventsTypeById(request);
+
+      if (!item)
+        return response
+          .status(HttpStatus.UNPROCESSABLE_ENTITY)
+          .json({ error: 'Connection error, please try again' });
+
+      return response.status(HttpStatus.OK).json({
+        item,
       });
     } catch (e) {
       throw new UnprocessableEntityException(

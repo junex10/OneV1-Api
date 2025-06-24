@@ -16,6 +16,9 @@ export class EventsType extends Model {
   @Column
   name: string;
 
+  @Column
+  default_pic: string;
+
   @CreatedAt
   @Column
   created_at: Date;
