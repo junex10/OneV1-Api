@@ -1,19 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { MessageBody } from '@nestjs/websockets';
 import SocketEvents from './socket.events';
-import { Chats, ChatSession, ChatUsers, Person, User } from 'src/models';
+import {
+  Chats,
+  ChatSession,
+  ChatUsers,
+  Events,
+  Person,
+  User,
+} from 'src/models';
 import {
   GetLogs,
+  SocketCheckNewEventIncoming,
   SocketCoordinates,
   SocketNewChatMessage,
   SocketNewPicChatMessage,
 } from './socket.entity';
 import * as fs from 'fs';
 import * as path from 'path';
-import Hash from '../hash';
-import * as moment from 'moment';
-import { Globals } from '..';
+import { Op } from 'sequelize';
+import { Globals, Constants } from '..';
 
 @Injectable()
 export class SocketService {
@@ -23,6 +29,7 @@ export class SocketService {
     @InjectModel(Chats) private chatsModel: typeof Chats,
     @InjectModel(ChatUsers) private chatUsersModel: typeof ChatUsers,
     @InjectModel(ChatSession) private chatSessionModel: typeof ChatSession,
+    @InjectModel(Events) private eventsModel: typeof Events,
   ) {}
 
   private getLogs = async (request: GetLogs) => {
@@ -111,5 +118,54 @@ export class SocketService {
       other_user_id: request.other_user_id,
     });
     return logs;
+  };
+
+  onNewEventIncoming = async (request: SocketCheckNewEventIncoming) => {
+    //  Return currently active events that we are hosting and sending to the APP (Later: notify all our followers thro push notifications)
+    const activeEvents = await this.eventsModel.findAll({
+      where: {
+        user_id: request.user_id,
+        status: Constants.EVENT_STATUS.ACTIVE,
+      },
+    });
+
+    return activeEvents;
+  };
+
+  // Crons
+
+  checkActiveEvents = async () => {
+    const now = new Date();
+
+    // Update events that have expired but not yet marked as FINISHED
+    await this.eventsModel.update(
+      { status: Constants.EVENT_STATUS.FINISHED },
+      {
+        where: {
+          expiration_time: { [Op.lt]: now },
+          status: Constants.EVENT_STATUS.ALMOST_FINISHED, //(THEY ARE ALMOST FINISHED IN STATUS SO WE SWAP IT TO FINISHED)
+        },
+      },
+    );
+
+    // Update events that are ongoing (started but not expired) to ACTIVE
+    await this.eventsModel.update(
+      { status: Constants.EVENT_STATUS.ACTIVE },
+      {
+        where: {
+          starting_event: { [Op.lte]: now },
+          expiration_time: { [Op.gt]: now },
+          status: Constants.EVENT_STATUS.PENDING, // THEY'RE PENDING AND WE UPDATE THEIR STATUS TO ACTIVE
+        },
+      },
+    );
+
+    // Delete events where expiration_time is more than 12 hours ago
+    const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+    await this.eventsModel.destroy({
+      where: {
+        expiration_time: { [Op.lt]: twelveHoursAgo },
+      },
+    });
   };
 }

@@ -55,6 +55,14 @@ export class AppEventsService {
         );
       }
 
+      let setStatus;
+
+      if (request.starting_event) {
+        setStatus = Constants.EVENT_STATUS.PENDING; // The event hasnt started yet cus it is planned
+      } else {
+        setStatus = Constants.EVENT_STATUS.ACTIVE; //No starting event time means the event is happening right now
+      }
+
       const data = {
         ...request,
         main_pic: request?.main_pic
@@ -63,9 +71,7 @@ export class AppEventsService {
         latitude: request?.latitude.toString(),
         longitude: request?.longitude.toString(),
         users_joined: request?.users_joined ? request.users_joined : 1, // -> Host is always the first user joined
-        status: request?.status
-          ? request.status
-          : Constants.EVENT_STATUS.ACTIVE,
+        status: setStatus,
         starting_event: request?.starting_event
           ? request?.starting_event
           : new Date(),

@@ -9,10 +9,12 @@ import { Socket, Server } from 'socket.io';
 import SocketEvents from './socket.events';
 import { SocketService } from './socket.service';
 import {
+  SocketCheckNewEventIncoming,
   SocketCoordinates,
   SocketNewChatMessage,
   SocketNewPicChatMessage,
 } from './socket.entity';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 const HEADERS = {
   Accept: 'application/json',
@@ -51,5 +53,19 @@ export class SocketController {
     const event = 'test';
     console.log('TEST');
     return { test: ' JUST TESTING ', data };
+  }
+
+  @SubscribeMessage(SocketEvents.NEW_EVENT_INCOMING)
+  async onNewEventIncoming(client, data: SocketCheckNewEventIncoming) {
+    const newData = await this.socketService.onNewEventIncoming(data);
+    this.server.emit(SocketEvents.NEW_EVENT_INCOMING, { places: newData });
+    return { places: newData };
+  }
+
+  // Events
+
+  @Cron(CronExpression.EVERY_MINUTE) // We're gonna check events that are ready to start, this is for events that we are host and also check other ones that are expired
+  async checkActiveEvents() {
+    await this.socketService.checkActiveEvents();
   }
 }

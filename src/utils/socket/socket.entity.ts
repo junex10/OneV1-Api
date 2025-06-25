@@ -23,3 +23,6 @@ export class GetLogs {
   user_id: number;
   other_user_id: number;
 }
+export class SocketCheckNewEventIncoming {
+  user_id: number;
+}

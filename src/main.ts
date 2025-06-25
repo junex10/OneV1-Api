@@ -14,6 +14,8 @@ Date.prototype.toJSON = function () {
   return moment(this).format('YYYY-MM-DD HH:mm:ss');
 };
 
+(global as any).crypto = require('crypto');
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
 
