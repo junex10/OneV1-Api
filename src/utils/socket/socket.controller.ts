@@ -11,6 +11,7 @@ import { SocketService } from './socket.service';
 import {
   SocketCheckNewEventIncoming,
   SocketCoordinates,
+  SocketJoinEventDTO,
   SocketNewChatMessage,
   SocketNewPicChatMessage,
 } from './socket.entity';
@@ -26,6 +27,13 @@ export class SocketController {
   @WebSocketServer() server: Server;
 
   constructor(private readonly socketService: SocketService) {}
+
+  @SubscribeMessage('test')
+  onEvent(client, data: any) {
+    const event = 'test';
+    console.log('TEST');
+    return { test: ' JUST TESTING ', data };
+  }
 
   @SubscribeMessage(SocketEvents.USER_LOCATION)
   onUserLocation(client, data: SocketCoordinates) {
@@ -48,21 +56,27 @@ export class SocketController {
     return { data: newData };
   }
 
-  @SubscribeMessage('test')
-  onEvent(client, data: any) {
-    const event = 'test';
-    console.log('TEST');
-    return { test: ' JUST TESTING ', data };
-  }
+  // events
 
-  @SubscribeMessage(SocketEvents.NEW_EVENT_INCOMING)
+  @SubscribeMessage(SocketEvents.EVENTS.NEW_EVENT_INCOMING)
   async onNewEventIncoming(client, data: SocketCheckNewEventIncoming) {
     const newData = await this.socketService.onNewEventIncoming(data);
-    this.server.emit(SocketEvents.NEW_EVENT_INCOMING, { places: newData });
+    this.server.emit(SocketEvents.EVENTS.NEW_EVENT_INCOMING, {
+      places: newData,
+    });
     return { places: newData };
   }
 
-  // Events
+  @SubscribeMessage(SocketEvents.EVENTS.USER_JOINING)
+  async onUserJoiningEvent(client, data: SocketJoinEventDTO) {
+    const newData = await this.socketService.onUserJoiningEvent(data);
+    this.server.emit(SocketEvents.EVENTS.USER_JOINING, {
+      data: newData,
+    });
+    return { data: newData };
+  }
+
+  // CRONS - Events
 
   @Cron(CronExpression.EVERY_MINUTE) // We're gonna check events that are ready to start, this is for events that we are host and also check other ones that are expired
   async checkActiveEvents() {

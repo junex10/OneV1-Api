@@ -26,3 +26,7 @@ export class GetLogs {
 export class SocketCheckNewEventIncoming {
   user_id: number;
 }
+export class SocketJoinEventDTO {
+  user_id: number;
+  event_id: number;
+}

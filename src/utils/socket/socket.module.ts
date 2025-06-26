@@ -8,6 +8,7 @@ import {
   ChatUsers,
   ChatSession,
   Events,
+  EventsUsersJoined,
 } from 'src/models';
 
 @Global()
@@ -20,6 +21,7 @@ import {
       ChatUsers,
       ChatSession,
       Events,
+      EventsUsersJoined,
     ]),
   ],
   exports: [SocketService],

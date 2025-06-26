@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import SocketEvents from './socket.events';
 import {
@@ -6,6 +6,7 @@ import {
   ChatSession,
   ChatUsers,
   Events,
+  EventsUsersJoined,
   Person,
   User,
 } from 'src/models';
@@ -13,6 +14,7 @@ import {
   GetLogs,
   SocketCheckNewEventIncoming,
   SocketCoordinates,
+  SocketJoinEventDTO,
   SocketNewChatMessage,
   SocketNewPicChatMessage,
 } from './socket.entity';
@@ -30,6 +32,8 @@ export class SocketService {
     @InjectModel(ChatUsers) private chatUsersModel: typeof ChatUsers,
     @InjectModel(ChatSession) private chatSessionModel: typeof ChatSession,
     @InjectModel(Events) private eventsModel: typeof Events,
+    @InjectModel(EventsUsersJoined)
+    private eventsJoinedModel: typeof EventsUsersJoined,
   ) {}
 
   private getLogs = async (request: GetLogs) => {
@@ -130,6 +134,21 @@ export class SocketService {
     });
 
     return activeEvents;
+  };
+
+  onUserJoiningEvent = async (request: SocketJoinEventDTO) => {
+    try {
+      const joined = await this.eventsJoinedModel.create({
+        user_id: request.user_id,
+        event_id: request.event_id,
+      });
+      return joined;
+    } catch (e) {
+      throw new UnprocessableEntityException(
+        'Connection error, please try again',
+        e.message,
+      );
+    }
   };
 
   // Crons
