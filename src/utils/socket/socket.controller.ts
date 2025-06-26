@@ -76,6 +76,15 @@ export class SocketController {
     return { data: newData };
   }
 
+  @SubscribeMessage(SocketEvents.EVENTS.USER_LEFT)
+  async onUserLeftEvent(client, data: SocketJoinEventDTO) {
+    const newData = await this.socketService.onUserLeftEvent(data);
+    this.server.emit(SocketEvents.EVENTS.USER_LEFT, {
+      data: newData,
+    });
+    return { data: newData };
+  }
+
   // CRONS - Events
 
   @Cron(CronExpression.EVERY_MINUTE) // We're gonna check events that are ready to start, this is for events that we are host and also check other ones that are expired

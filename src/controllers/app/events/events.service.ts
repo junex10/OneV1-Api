@@ -83,6 +83,13 @@ export class AppEventsService {
       const event = await this.eventModel.create(data);
 
       if (event) {
+        // We create our first user joined (host)
+
+        await this.eventsUsersJoined.create({
+          user_id: request.user_id,
+          event_id: event.id,
+        });
+
         const getEvent = await this.eventModel.findOne({
           where: {
             id: event.id,

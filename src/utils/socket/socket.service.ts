@@ -151,6 +151,23 @@ export class SocketService {
     }
   };
 
+  onUserLeftEvent = async (request: SocketJoinEventDTO) => {
+    try {
+      const joined = await this.eventsJoinedModel.destroy({
+        where: {
+          user_id: request.user_id,
+          event_id: request.event_id,
+        },
+      });
+      return joined;
+    } catch (e) {
+      throw new UnprocessableEntityException(
+        'Connection error, please try again',
+        e.message,
+      );
+    }
+  };
+
   // Crons
 
   checkActiveEvents = async () => {
@@ -181,10 +198,15 @@ export class SocketService {
 
     // Delete events where expiration_time is more than 12 hours ago
     const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000);
-    await this.eventsModel.destroy({
-      where: {
-        expiration_time: { [Op.lt]: twelveHoursAgo },
+    await this.eventsModel.update(
+      {
+        status: Constants.EVENT_STATUS.CLOSED,
       },
-    });
+      {
+        where: {
+          expiration_time: { [Op.lt]: twelveHoursAgo },
+        },
+      },
+    );
   };
 }
