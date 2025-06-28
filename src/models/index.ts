@@ -17,6 +17,7 @@ import { EventLikesUser } from './event_likes_user';
 import { UsersCode } from './users_code';
 import { Friends } from './friends';
 import { EventsUsersJoined } from './events_user_joined';
+import { EventComments } from './events_comment';
 
 export {
   Level,
@@ -38,4 +39,5 @@ export {
   UsersCode,
   Friends,
   EventsUsersJoined,
+  EventComments,
 };
