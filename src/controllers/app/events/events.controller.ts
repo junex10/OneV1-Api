@@ -14,6 +14,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import {
+  GetAllMyEventsDTO,
   GetEventDTO,
   GetEventsByUserDTO,
   GetEventsDTO,
@@ -25,12 +26,12 @@ import { AppEventsService } from './events.service';
 @ApiTags('App - Events')
 @Controller('api/app/events')
 export class AppEventsController {
-  constructor(private readonly mapService: AppEventsService) {}
+  constructor(private readonly eventService: AppEventsService) {}
 
   @Post('/setEvent')
   async setEvent(@Body() request: SetEventDTO, @Res() response: Response) {
     try {
-      const places = await this.mapService.setEvent(request);
+      const places = await this.eventService.setEvent(request);
 
       if (!places)
         return response
@@ -51,7 +52,7 @@ export class AppEventsController {
   @Post('/getEvents')
   async getEvents(@Body() request: GetEventsDTO, @Res() response: Response) {
     try {
-      const places = await this.mapService.getEvents(request);
+      const places = await this.eventService.getEvents(request);
 
       if (!places)
         return response
@@ -72,7 +73,7 @@ export class AppEventsController {
   @Post('/getEvent')
   async getEvent(@Body() request: GetEventDTO, @Res() response: Response) {
     try {
-      const place = await this.mapService.getEvent(request);
+      const place = await this.eventService.getEvent(request);
 
       if (!place)
         return response
@@ -96,7 +97,7 @@ export class AppEventsController {
     @Res() response: Response,
   ) {
     try {
-      const places = await this.mapService.getEventsByUser(request);
+      const places = await this.eventService.getEventsByUser(request);
 
       if (!places)
         return response
@@ -117,7 +118,7 @@ export class AppEventsController {
   @Post('/getEventsType')
   async getEventsType(@Res() response: Response) {
     try {
-      const items = await this.mapService.getEventsType();
+      const items = await this.eventService.getEventsType();
 
       if (!items)
         return response
@@ -140,7 +141,7 @@ export class AppEventsController {
     @Res() response: Response,
   ) {
     try {
-      const item = await this.mapService.getEventsTypeById(request);
+      const item = await this.eventService.getEventsTypeById(request);
 
       if (!item)
         return response
@@ -149,6 +150,29 @@ export class AppEventsController {
 
       return response.status(HttpStatus.OK).json({
         item,
+      });
+    } catch (e) {
+      throw new UnprocessableEntityException(
+        'Connection error, please try again',
+        e.message,
+      );
+    }
+  }
+  @Post('/getAllMyEvents')
+  async getAllMyEvents(
+    @Body() request: GetAllMyEventsDTO,
+    @Res() response: Response,
+  ) {
+    try {
+      const events = await this.eventService.getAllMyEvents(request);
+
+      if (!events)
+        return response
+          .status(HttpStatus.UNPROCESSABLE_ENTITY)
+          .json({ error: 'Connection error, please try again' });
+
+      return response.status(HttpStatus.OK).json({
+        events,
       });
     } catch (e) {
       throw new UnprocessableEntityException(

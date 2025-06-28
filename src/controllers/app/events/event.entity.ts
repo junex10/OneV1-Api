@@ -53,3 +53,7 @@ export class GetEventsTypeDTO {
   @ApiProperty({ required: false })
   event_type_id?: number;
 }
+export class GetAllMyEventsDTO {
+  @ApiProperty({ required: true })
+  user_id?: number;
+}

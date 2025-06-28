@@ -173,6 +173,18 @@ export class SocketService {
   checkActiveEvents = async () => {
     const now = new Date();
 
+    // Mark events as ALMOST_FINISHED if they have 30 minutes or less left and are ACTIVE
+    const thirtyMinutesFromNow = new Date(now.getTime() + 30 * 60 * 1000);
+    await this.eventsModel.update(
+      { status: Constants.EVENT_STATUS.ALMOST_FINISHED },
+      {
+        where: {
+          expiration_time: { [Op.lte]: thirtyMinutesFromNow, [Op.gt]: now },
+          status: Constants.EVENT_STATUS.ACTIVE,
+        },
+      },
+    );
+
     // Update events that have expired but not yet marked as FINISHED
     await this.eventsModel.update(
       { status: Constants.EVENT_STATUS.FINISHED },

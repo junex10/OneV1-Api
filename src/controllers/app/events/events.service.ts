@@ -7,8 +7,10 @@ import {
   Events,
   EventsType,
   EventsUsersJoined,
+  Friends,
 } from 'src/models';
 import {
+  GetAllMyEventsDTO,
   GetEventDTO,
   GetEventsByUserDTO,
   GetEventsDTO,
@@ -29,6 +31,7 @@ export class AppEventsService {
     @InjectModel(Person) private personModel: typeof Person,
     @InjectModel(Events) private eventModel: typeof Events,
     @InjectModel(EventsType) private eventTypeModel: typeof EventsType,
+    @InjectModel(Friends) private friendsModel: typeof Friends,
     @InjectModel(EventsUsersJoined)
     private eventsUsersJoined: typeof EventsUsersJoined,
     private readonly http: HttpService,
@@ -259,5 +262,112 @@ export class AppEventsService {
     } catch (e) {
       return null;
     }
+  }
+
+  async getAllMyEvents(@Body() request: GetAllMyEventsDTO) {
+    let allEvents = [];
+
+    // All the events that the current user is hosting
+
+    const hostingEvents = await this.eventModel.findAll({
+      where: {
+        user_id: request.user_id,
+        status: { [Op.ne]: Constants.EVENT_STATUS.CLOSED },
+      },
+    });
+
+    // All the events that we joined but we dont host
+
+    const joinedEvents = await this.eventsUsersJoined.findAll({
+      where: {
+        user_id: request.user_id,
+      },
+      include: [
+        {
+          model: Events,
+          where: {
+            status: { [Op.ne]: Constants.EVENT_STATUS.CLOSED },
+          },
+        },
+      ],
+    });
+
+    // All the events that our friends are hosting or joined
+    // Get friend user IDs
+    const friends = await this.friendsModel.findAll({
+      where: {
+        [Op.or]: [
+          { sender_id: request.user_id },
+          { receiver_id: request.user_id },
+        ],
+      },
+    });
+    const friendIds = friends
+      .map((f) =>
+        f.sender_id === request.user_id ? f.receiver_id : f.sender_id,
+      )
+      .filter((id) => id !== request.user_id);
+
+    let friendsHostingEvents = [];
+    let friendsJoinedEvents = [];
+
+    if (friendIds.length) {
+      // Events hosted by friends
+      friendsHostingEvents = await this.eventModel.findAll({
+        where: {
+          user_id: { [Op.in]: friendIds },
+          status: { [Op.ne]: Constants.EVENT_STATUS.CLOSED },
+        },
+      });
+
+      // Events joined by friends (excluding those already hosted above)
+      friendsJoinedEvents = await this.eventsUsersJoined.findAll({
+        where: {
+          user_id: { [Op.in]: friendIds },
+        },
+        include: [
+          {
+            model: Events,
+            where: { status: { [Op.ne]: Constants.EVENT_STATUS.CLOSED } },
+          },
+        ],
+      });
+    }
+
+    // Flatten joined events and avoid duplicates
+    const hostingEventIds = hostingEvents.map((e) => e.id);
+    const joinedEventIds = joinedEvents.map((j) => j.event_id);
+    const friendsHostingEventIds = friendsHostingEvents.map((e) => e.id);
+
+    // Only unique events for friends joined (not already in friendsHostingEvents)
+    const friendsJoinedUnique = friendsJoinedEvents
+      .map((j) => j.Event)
+      .filter(
+        (e) =>
+          e &&
+          !friendsHostingEventIds.includes(e.id) &&
+          !hostingEventIds.includes(e.id) &&
+          !joinedEventIds.includes(e.id),
+      );
+
+    // Combine all events (hosted, joined, friends hosting, friends joined)
+    allEvents = [
+      ...hostingEvents,
+      ...joinedEvents.map((j) => j.event),
+      ...friendsHostingEvents,
+      ...friendsJoinedUnique,
+    ];
+
+    // Remove possible nulls and duplicates by event id
+    const uniqueEvents = [];
+    const seen = new Set();
+    for (const e of allEvents) {
+      if (e && !seen.has(e.id)) {
+        uniqueEvents.push(e);
+        seen.add(e.id);
+      }
+    }
+
+    return uniqueEvents;
   }
 }
