@@ -63,3 +63,11 @@ export class GetViewersDTO {
   @ApiProperty({ required: false })
   user_id: number;
 }
+export class GetCommentsDTO {
+  @ApiProperty({ required: true })
+  event_id: number;
+  @ApiProperty({ required: false })
+  count_comments?: boolean;
+  @ApiProperty({ required: false })
+  last_comment?: boolean;
+}

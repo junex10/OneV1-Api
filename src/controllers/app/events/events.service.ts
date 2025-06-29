@@ -8,9 +8,11 @@ import {
   EventsType,
   EventsUsersJoined,
   Friends,
+  EventComments,
 } from 'src/models';
 import {
   GetAllMyEventsDTO,
+  GetCommentsDTO,
   GetEventDTO,
   GetEventsByUserDTO,
   GetEventsDTO,
@@ -32,6 +34,8 @@ export class AppEventsService {
     @InjectModel(Person) private personModel: typeof Person,
     @InjectModel(Events) private eventModel: typeof Events,
     @InjectModel(EventsType) private eventTypeModel: typeof EventsType,
+    @InjectModel(EventComments)
+    private eventsCommentModel: typeof EventComments,
     @InjectModel(Friends) private friendsModel: typeof Friends,
     @InjectModel(EventsUsersJoined)
     private eventsUsersJoined: typeof EventsUsersJoined,
@@ -416,6 +420,39 @@ export class AppEventsService {
       }
 
       return viewers;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  getComments = async (request: GetCommentsDTO) => {
+    try {
+      let comments;
+      if (request.count_comments) {
+        comments = await this.eventsCommentModel.count({
+          where: {
+            event_id: request.event_id,
+          },
+        });
+      } else {
+        if (!request.last_comment) {
+          comments = await this.eventsCommentModel.findAll({
+            where: {
+              event_id: request.event_id,
+            },
+          });
+        } else {
+          comments = await this.eventsCommentModel.findOne({
+            where: {
+              event_id: request.event_id,
+            },
+            limit: 1,
+            order: [['id', 'desc']],
+            include: [{ model: User, include: [{ model: Person }] }],
+          });
+        }
+      }
+      return comments;
     } catch (e) {
       return null;
     }

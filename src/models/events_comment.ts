@@ -13,7 +13,7 @@ import { Level, Events, User } from '.';
 @DefaultScope(() => ({
   include: [
     {
-      model: Level,
+      model: User,
     },
   ],
 }))

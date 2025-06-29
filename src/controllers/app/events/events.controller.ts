@@ -15,6 +15,7 @@ import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import {
   GetAllMyEventsDTO,
+  GetCommentsDTO,
   GetEventDTO,
   GetEventsByUserDTO,
   GetEventsDTO,
@@ -195,6 +196,29 @@ export class AppEventsController {
 
       return response.status(HttpStatus.OK).json({
         viewers,
+      });
+    } catch (e) {
+      throw new UnprocessableEntityException(
+        'Connection error, please try again',
+        e.message,
+      );
+    }
+  }
+  @Post('/getComments')
+  async getComments(
+    @Body() request: GetCommentsDTO,
+    @Res() response: Response,
+  ) {
+    try {
+      const comments = await this.eventService.getComments(request);
+
+      if (!comments)
+        return response
+          .status(HttpStatus.UNPROCESSABLE_ENTITY)
+          .json({ error: 'Connection error, please try again' });
+
+      return response.status(HttpStatus.OK).json({
+        comments,
       });
     } catch (e) {
       throw new UnprocessableEntityException(
