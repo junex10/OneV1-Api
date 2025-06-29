@@ -94,7 +94,11 @@ export class SocketService {
       user_id: request.sender_id,
       other_user_id: request.other_user_id,
     });
-    return logs;
+    return {
+      sender_id: request.sender_id,
+      other_user_id: request.other_user_id,
+      ...logs,
+    };
   };
 
   newPicMessage = async (request: SocketNewPicChatMessage) => {
@@ -121,7 +125,11 @@ export class SocketService {
       user_id: request.sender_id,
       other_user_id: request.other_user_id,
     });
-    return logs;
+    return {
+      sender_id: request.sender_id,
+      other_user_id: request.other_user_id,
+      ...logs,
+    };
   };
 
   onNewEventIncoming = async (request: SocketCheckNewEventIncoming) => {
