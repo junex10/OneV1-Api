@@ -15,6 +15,7 @@ import {
   GetEventsByUserDTO,
   GetEventsDTO,
   GetEventsTypeDTO,
+  GetViewersDTO,
   SetEventDTO,
 } from './event.entity';
 import { Constants, Globals } from 'src/utils';
@@ -383,4 +384,40 @@ export class AppEventsService {
 
     return uniqueEvents;
   }
+
+  getViewers = async (request: GetViewersDTO) => {
+    try {
+      let viewers;
+      if (!request.user_id) {
+        viewers = await this.eventsUsersJoined.findAll({
+          where: {
+            event_id: request.event_id,
+          },
+          include: [
+            {
+              model: User,
+              include: [{ model: Person }],
+            },
+          ],
+        });
+      } else {
+        viewers = await this.eventsUsersJoined.findAll({
+          where: {
+            event_id: request.event_id,
+            user_id: { [Op.ne]: request.user_id },
+          },
+          include: [
+            {
+              model: User,
+              include: [{ model: Person }],
+            },
+          ],
+        });
+      }
+
+      return viewers;
+    } catch (e) {
+      return null;
+    }
+  };
 }

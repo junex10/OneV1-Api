@@ -57,3 +57,9 @@ export class GetAllMyEventsDTO {
   @ApiProperty({ required: true })
   user_id?: number;
 }
+export class GetViewersDTO {
+  @ApiProperty({ required: true })
+  event_id: number;
+  @ApiProperty({ required: false })
+  user_id: number;
+}

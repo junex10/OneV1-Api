@@ -19,6 +19,7 @@ import {
   GetEventsByUserDTO,
   GetEventsDTO,
   GetEventsTypeDTO,
+  GetViewersDTO,
   SetEventDTO,
 } from './event.entity';
 import { AppEventsService } from './events.service';
@@ -173,6 +174,27 @@ export class AppEventsController {
 
       return response.status(HttpStatus.OK).json({
         events,
+      });
+    } catch (e) {
+      throw new UnprocessableEntityException(
+        'Connection error, please try again',
+        e.message,
+      );
+    }
+  }
+
+  @Post('/getViewers')
+  async getViewers(@Body() request: GetViewersDTO, @Res() response: Response) {
+    try {
+      const viewers = await this.eventService.getViewers(request);
+
+      if (!viewers)
+        return response
+          .status(HttpStatus.UNPROCESSABLE_ENTITY)
+          .json({ error: 'Connection error, please try again' });
+
+      return response.status(HttpStatus.OK).json({
+        viewers,
       });
     } catch (e) {
       throw new UnprocessableEntityException(
