@@ -125,11 +125,11 @@ export class SocketService {
   };
 
   onNewEventIncoming = async (request: SocketCheckNewEventIncoming) => {
-    //  Return currently active events that we are hosting and sending to the APP (Later: notify all our followers thro push notifications)
+    //  Return events that we are part of
     const activeEvents = await this.eventsModel.findAll({
       where: {
         user_id: request.user_id,
-        status: Constants.EVENT_STATUS.ACTIVE,
+        status: { [Op.ne]: Constants.EVENT_STATUS.CLOSED },
       },
     });
 
@@ -153,13 +153,20 @@ export class SocketService {
 
   onUserLeftEvent = async (request: SocketJoinEventDTO) => {
     try {
-      const joined = await this.eventsJoinedModel.destroy({
-        where: {
-          user_id: request.user_id,
-          event_id: request.event_id,
-        },
+      const where = {
+        user_id: request.user_id,
+        event_id: request.event_id,
+      };
+
+      const lastEvent = await this.eventsJoinedModel.findOne({
+        where,
       });
-      return joined;
+
+      await this.eventsJoinedModel.destroy({
+        where,
+      });
+
+      return lastEvent;
     } catch (e) {
       throw new UnprocessableEntityException(
         'Connection error, please try again',

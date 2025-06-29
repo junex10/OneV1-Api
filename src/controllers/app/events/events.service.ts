@@ -66,8 +66,17 @@ export class AppEventsService {
         setStatus = Constants.EVENT_STATUS.ACTIVE; //No starting event time means the event is happening right now
       }
 
+      // We look up the address using coordinates
+
+      const url = `${GOOGLE_API}geocode/json?latlng=${request.latitude},${request.longitude}&key=${GOOGLE_API_KEY}`;
+      const response = await this.http.get(url).toPromise();
+      const address =
+        response?.data?.results?.[0]?.formatted_address ||
+        `No address has been found`;
+
       const data = {
         ...request,
+        address,
         main_pic: request?.main_pic
           ? `events/${hashedFileName}`
           : `${process.env.BASE_URL}/img/random_location.jpg`,
@@ -363,7 +372,11 @@ export class AppEventsService {
     const seen = new Set();
     for (const e of allEvents) {
       if (e && !seen.has(e.id)) {
-        uniqueEvents.push(e);
+        // Add joined property
+        uniqueEvents.push({
+          ...(e.get ? e.get({ plain: true }) : e), // flatten sequelize instance if needed
+          joined: joinedEventIds.includes(e.id),
+        });
         seen.add(e.id);
       }
     }
