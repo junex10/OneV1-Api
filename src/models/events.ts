@@ -9,7 +9,7 @@ import {
   DefaultScope,
   HasMany,
 } from 'sequelize-typescript';
-import { EventsType, EventsUsersJoined, User } from '.';
+import { EventsType, EventsUsersJoined, Person, User } from '.';
 
 @DefaultScope(() => ({
   include: [
@@ -18,6 +18,7 @@ import { EventsType, EventsUsersJoined, User } from '.';
     },
     {
       model: User,
+      include: [{ model: Person }],
     },
   ],
 }))

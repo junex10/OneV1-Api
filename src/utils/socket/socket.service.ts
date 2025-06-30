@@ -5,6 +5,7 @@ import {
   Chats,
   ChatSession,
   ChatUsers,
+  EventComments,
   Events,
   EventsUsersJoined,
   Person,
@@ -16,6 +17,7 @@ import {
   SocketCoordinates,
   SocketJoinEventDTO,
   SocketNewChatMessage,
+  SocketNewEventComment,
   SocketNewPicChatMessage,
 } from './socket.entity';
 import * as fs from 'fs';
@@ -32,6 +34,8 @@ export class SocketService {
     @InjectModel(ChatUsers) private chatUsersModel: typeof ChatUsers,
     @InjectModel(ChatSession) private chatSessionModel: typeof ChatSession,
     @InjectModel(Events) private eventsModel: typeof Events,
+    @InjectModel(EventComments)
+    private eventsCommentModel: typeof EventComments,
     @InjectModel(EventsUsersJoined)
     private eventsJoinedModel: typeof EventsUsersJoined,
   ) {}
@@ -175,6 +179,22 @@ export class SocketService {
       });
 
       return lastEvent;
+    } catch (e) {
+      throw new UnprocessableEntityException(
+        'Connection error, please try again',
+        e.message,
+      );
+    }
+  };
+
+  onNewEventComment = async (request: SocketNewEventComment) => {
+    try {
+      const comment = await this.eventsCommentModel.create({
+        event_id: request.event_id,
+        comment: request.comment,
+        user_id: request.user_id,
+      });
+      return comment;
     } catch (e) {
       throw new UnprocessableEntityException(
         'Connection error, please try again',

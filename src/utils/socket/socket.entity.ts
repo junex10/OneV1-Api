@@ -30,3 +30,8 @@ export class SocketJoinEventDTO {
   user_id: number;
   event_id: number;
 }
+export class SocketNewEventComment {
+  event_id: number;
+  user_id: number;
+  comment: string;
+}

@@ -13,6 +13,7 @@ import {
   SocketCoordinates,
   SocketJoinEventDTO,
   SocketNewChatMessage,
+  SocketNewEventComment,
   SocketNewPicChatMessage,
 } from './socket.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -69,20 +70,31 @@ export class SocketController {
 
   @SubscribeMessage(SocketEvents.EVENTS.USER_JOINING)
   async onUserJoiningEvent(client, data: SocketJoinEventDTO) {
+    client.join(`event_${data.event_id}`);
     const newData = await this.socketService.onUserJoiningEvent(data);
-    this.server.emit(SocketEvents.EVENTS.USER_JOINING, {
-      data: newData,
-    });
+    this.server
+      .to(`event_${data.event_id}`)
+      .emit(SocketEvents.EVENTS.USER_JOINING, { data: newData });
     return { data: newData };
   }
 
   @SubscribeMessage(SocketEvents.EVENTS.USER_LEFT)
   async onUserLeftEvent(client, data: SocketJoinEventDTO) {
+    client.leave(`event_${data.event_id}`);
     const newData = await this.socketService.onUserLeftEvent(data);
-    this.server.emit(SocketEvents.EVENTS.USER_LEFT, {
-      data: newData,
-    });
+    this.server
+      .to(`event_${data.event_id}`)
+      .emit(SocketEvents.EVENTS.USER_LEFT, { data: newData });
     return { data: newData };
+  }
+
+  @SubscribeMessage(SocketEvents.EVENTS.NEW_COMMENT)
+  async onNewEventComment(client, data: SocketNewEventComment) {
+    const newData = await this.socketService.onNewEventComment(data);
+    this.server
+      .to(`event_${data.event_id}`)
+      .emit(SocketEvents.EVENTS.NEW_COMMENT, { places: newData });
+    return { places: newData };
   }
 
   // CRONS - Events

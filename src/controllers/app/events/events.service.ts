@@ -440,6 +440,7 @@ export class AppEventsService {
             where: {
               event_id: request.event_id,
             },
+            include: [{ model: User, include: [{ model: Person }] }],
           });
         } else {
           comments = await this.eventsCommentModel.findOne({
