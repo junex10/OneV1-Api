@@ -453,6 +453,7 @@ export class AppEventsService {
           });
         }
       }
+      console.log(comments, ' HERE ');
       return comments;
     } catch (e) {
       return null;

@@ -150,11 +150,20 @@ export class SocketService {
 
   onUserJoiningEvent = async (request: SocketJoinEventDTO) => {
     try {
-      const joined = await this.eventsJoinedModel.create({
-        user_id: request.user_id,
-        event_id: request.event_id,
+      const verify = await this.eventsJoinedModel.findOne({
+        where: {
+          user_id: request.user_id,
+          event_id: request.event_id,
+        },
       });
-      return joined;
+      if (!verify) {
+        const joined = await this.eventsJoinedModel.create({
+          user_id: request.user_id,
+          event_id: request.event_id,
+        });
+        return joined;
+      }
+      return verify;
     } catch (e) {
       throw new UnprocessableEntityException(
         'Connection error, please try again',
@@ -194,7 +203,13 @@ export class SocketService {
         comment: request.comment,
         user_id: request.user_id,
       });
-      return comment;
+      const getNewComment = await this.eventsCommentModel.findOne({
+        where: {
+          id: comment.id,
+        },
+        include: [{ model: User, include: [{ model: Person }] }],
+      });
+      return getNewComment;
     } catch (e) {
       throw new UnprocessableEntityException(
         'Connection error, please try again',

@@ -212,10 +212,12 @@ export class AppEventsController {
     try {
       const comments = await this.eventService.getComments(request);
 
-      if (!comments)
-        return response
-          .status(HttpStatus.UNPROCESSABLE_ENTITY)
-          .json({ error: 'Connection error, please try again' });
+      if (comments !== 0) {
+        if (!comments)
+          return response
+            .status(HttpStatus.UNPROCESSABLE_ENTITY)
+            .json({ error: 'Connection error, please try again' });
+      }
 
       return response.status(HttpStatus.OK).json({
         comments,

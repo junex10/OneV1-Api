@@ -72,6 +72,7 @@ export class SocketController {
   async onUserJoiningEvent(client, data: SocketJoinEventDTO) {
     client.join(`event_${data.event_id}`);
     const newData = await this.socketService.onUserJoiningEvent(data);
+    console.log('WE JOINED ');
     this.server
       .to(`event_${data.event_id}`)
       .emit(SocketEvents.EVENTS.USER_JOINING, { data: newData });
@@ -93,8 +94,8 @@ export class SocketController {
     const newData = await this.socketService.onNewEventComment(data);
     this.server
       .to(`event_${data.event_id}`)
-      .emit(SocketEvents.EVENTS.NEW_COMMENT, { places: newData });
-    return { places: newData };
+      .emit(SocketEvents.EVENTS.NEW_COMMENT, { comment: newData });
+    return { comment: newData };
   }
 
   // CRONS - Events
