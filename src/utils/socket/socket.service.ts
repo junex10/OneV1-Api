@@ -6,6 +6,7 @@ import {
   ChatSession,
   ChatUsers,
   EventComments,
+  EventLikesUser,
   Events,
   EventsUsersJoined,
   Person,
@@ -18,6 +19,7 @@ import {
   SocketJoinEventDTO,
   SocketNewChatMessage,
   SocketNewEventComment,
+  SocketNewEventLike,
   SocketNewPicChatMessage,
 } from './socket.entity';
 import * as fs from 'fs';
@@ -33,6 +35,7 @@ export class SocketService {
     @InjectModel(Chats) private chatsModel: typeof Chats,
     @InjectModel(ChatUsers) private chatUsersModel: typeof ChatUsers,
     @InjectModel(ChatSession) private chatSessionModel: typeof ChatSession,
+    @InjectModel(EventLikesUser) private eventsLikeModel: typeof EventLikesUser,
     @InjectModel(Events) private eventsModel: typeof Events,
     @InjectModel(EventComments)
     private eventsCommentModel: typeof EventComments,
@@ -216,6 +219,61 @@ export class SocketService {
         e.message,
       );
     }
+  };
+
+  onNewEventLike = async (request: SocketNewEventLike) => {
+    let likes = 0;
+    // we get the total likes of the current event
+    const currentLikes = await this.eventsModel.findOne({
+      where: {
+        id: request.event_id,
+      },
+    });
+
+    // Now we get do an conditional if the user liked it previously or no, if he did, we gonna dislike the event, otherwise we like it
+    const likeCheck = await this.eventsLikeModel.findOne({
+      where: {
+        event_id: request.event_id,
+        user_id: request.user_id,
+      },
+    });
+    const numberCurrentLikes = Number(currentLikes.likes);
+
+    console.log(likeCheck, likes, ' HERE ');
+
+    if (!likeCheck) {
+      likes = numberCurrentLikes + 1;
+      await this.eventsLikeModel.create({
+        event_id: request.event_id,
+        user_id: request.user_id,
+      });
+    } else {
+      // The like already exists so we dislike
+
+      likes = Math.max(0, numberCurrentLikes - 1);
+
+      await this.eventsLikeModel.destroy({
+        where: {
+          event_id: request.event_id,
+          user_id: request.user_id,
+        },
+      });
+    }
+
+    await this.eventsModel.update(
+      {
+        likes,
+      },
+      {
+        where: {
+          id: request.event_id,
+        },
+      },
+    );
+
+    return await this.eventsModel.findOne({
+      where: { id: request.event_id },
+    });
   };
 
   // Crons

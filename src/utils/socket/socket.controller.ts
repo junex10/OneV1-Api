@@ -14,6 +14,7 @@ import {
   SocketJoinEventDTO,
   SocketNewChatMessage,
   SocketNewEventComment,
+  SocketNewEventLike,
   SocketNewPicChatMessage,
 } from './socket.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -72,7 +73,6 @@ export class SocketController {
   async onUserJoiningEvent(client, data: SocketJoinEventDTO) {
     client.join(`event_${data.event_id}`);
     const newData = await this.socketService.onUserJoiningEvent(data);
-    console.log('WE JOINED ');
     this.server
       .to(`event_${data.event_id}`)
       .emit(SocketEvents.EVENTS.USER_JOINING, { data: newData });
@@ -95,6 +95,15 @@ export class SocketController {
     this.server
       .to(`event_${data.event_id}`)
       .emit(SocketEvents.EVENTS.NEW_COMMENT, { comment: newData });
+    return { comment: newData };
+  }
+
+  @SubscribeMessage(SocketEvents.EVENTS.NEW_LIKE)
+  async onNewEventLike(client, data: SocketNewEventLike) {
+    const newData = await this.socketService.onNewEventLike(data);
+    this.server
+      .to(`event_${data.event_id}`)
+      .emit(SocketEvents.EVENTS.NEW_LIKE, { comment: newData });
     return { comment: newData };
   }
 

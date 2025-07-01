@@ -35,3 +35,7 @@ export class SocketNewEventComment {
   user_id: number;
   comment: string;
 }
+export class SocketNewEventLike {
+  event_id: number;
+  user_id: number;
+}

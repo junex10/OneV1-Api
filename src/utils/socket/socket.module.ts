@@ -10,6 +10,7 @@ import {
   Events,
   EventsUsersJoined,
   EventComments,
+  EventLikesUser,
 } from 'src/models';
 
 @Global()
@@ -24,6 +25,7 @@ import {
       Events,
       EventsUsersJoined,
       EventComments,
+      EventLikesUser,
     ]),
   ],
   exports: [SocketService],

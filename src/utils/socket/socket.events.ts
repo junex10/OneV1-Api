@@ -7,5 +7,6 @@ export default {
     USER_JOINING: 'event/user-joining-event',
     USER_LEFT: 'event/user-left-event',
     NEW_COMMENT: 'event/new-comment',
+    NEW_LIKE: 'event/new-like',
   },
 };

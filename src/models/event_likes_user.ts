@@ -13,7 +13,10 @@ import { Level, Events, User } from '.';
 @DefaultScope(() => ({
   include: [
     {
-      model: Level,
+      model: Events,
+    },
+    {
+      model: User,
     },
   ],
 }))
@@ -28,6 +31,12 @@ export class EventLikesUser extends Model {
 
   @BelongsTo(() => User, 'user_id')
   user: User;
+
+  @Column
+  user_id: number;
+
+  @Column
+  event_id: number;
 
   @CreatedAt
   @Column
