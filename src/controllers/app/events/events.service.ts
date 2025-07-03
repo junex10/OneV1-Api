@@ -131,19 +131,19 @@ export class AppEventsService {
           (
             6371000 * acos(
               cos(radians(${request.latitude}))
-              * cos(radians(CAST(latitude AS DECIMAL(10,7))))
-              * cos(radians(CAST(longitude AS DECIMAL(10,7))) - radians(${request.longitude}))
+              * cos(radians(CAST(Events.latitude AS DECIMAL(10,7))))
+              * cos(radians(CAST(Events.longitude AS DECIMAL(10,7))) - radians(${request.longitude}))
               + sin(radians(${request.latitude}))
-              * sin(radians(CAST(latitude AS DECIMAL(10,7))))
+              * sin(radians(CAST(Events.latitude AS DECIMAL(10,7))))
             )
           ) < ${radius}
           AND (
             6371000 * acos(
               cos(radians(${request.latitude}))
-              * cos(radians(CAST(latitude AS DECIMAL(10,7))))
-              * cos(radians(CAST(longitude AS DECIMAL(10,7))) - radians(${request.longitude}))
+              * cos(radians(CAST(Events.latitude AS DECIMAL(10,7))))
+              * cos(radians(CAST(Events.longitude AS DECIMAL(10,7))) - radians(${request.longitude}))
               + sin(radians(${request.latitude}))
-              * sin(radians(CAST(latitude AS DECIMAL(10,7))))
+              * sin(radians(CAST(Events.latitude AS DECIMAL(10,7))))
             )
           ) >= ${excludeRadius}
         `),
@@ -194,19 +194,19 @@ export class AppEventsService {
             (
               6371000 * acos(
                 cos(radians(${request.latitude}))
-                * cos(radians(CAST(latitude AS DECIMAL(10,7))))
-                * cos(radians(CAST(longitude AS DECIMAL(10,7))) - radians(${request.longitude}))
+                * cos(radians(CAST(Events.latitude AS DECIMAL(10,7))))
+                * cos(radians(CAST(Events.longitude AS DECIMAL(10,7))) - radians(${request.longitude}))
                 + sin(radians(${request.latitude}))
-                * sin(radians(CAST(latitude AS DECIMAL(10,7))))
+                * sin(radians(CAST(Events.latitude AS DECIMAL(10,7))))
               )
             ) < ${radius}
             AND (
               6371000 * acos(
                 cos(radians(${request.latitude}))
-                * cos(radians(CAST(latitude AS DECIMAL(10,7))))
-                * cos(radians(CAST(longitude AS DECIMAL(10,7))) - radians(${request.longitude}))
+                * cos(radians(CAST(Events.latitude AS DECIMAL(10,7))))
+                * cos(radians(CAST(Events.longitude AS DECIMAL(10,7))) - radians(${request.longitude}))
                 + sin(radians(${request.latitude}))
-                * sin(radians(CAST(latitude AS DECIMAL(10,7))))
+                * sin(radians(CAST(Events.latitude AS DECIMAL(10,7))))
               )
             ) >= ${excludeRadius}
           `),
