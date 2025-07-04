@@ -29,6 +29,10 @@ export default {
       FOLLOWED: 1,
       BLOCKED: 2,
     },
+    LEVELS: {
+      ADMIN: 1,
+      USER: 2,
+    },
   },
   NOTIFICATIONS: {
     STATUS: {

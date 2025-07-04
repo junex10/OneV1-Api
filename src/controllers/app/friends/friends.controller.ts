@@ -23,12 +23,12 @@ import { AppFriendsService } from './friends.service';
 @ApiTags('App - Friends')
 @Controller('api/app/friends')
 export class AppFriendsController {
-  constructor(private readonly mapService: AppFriendsService) {}
+  constructor(private readonly friendService: AppFriendsService) {}
 
   @Post('/setFriend')
   async setFriend(@Body() request: SetFriendsDTO, @Res() response: Response) {
     try {
-      const places = await this.mapService.setFriend(request);
+      const places = await this.friendService.setFriend(request);
 
       if (!places)
         return response
@@ -49,7 +49,7 @@ export class AppFriendsController {
   @Post('/getFriends')
   async getFriends(@Body() request: GetFriendsDTO, @Res() response: Response) {
     try {
-      const friends = await this.mapService.getFriends(request);
+      const friends = await this.friendService.getFriends(request);
 
       if (!friends)
         return response
@@ -72,12 +72,7 @@ export class AppFriendsController {
     @Res() response: Response,
   ) {
     try {
-      const friends = await this.mapService.checkFriendSubscription(request);
-
-      if (!friends)
-        return response
-          .status(HttpStatus.UNPROCESSABLE_ENTITY)
-          .json({ error: 'Connection error, please try again' });
+      const friends = await this.friendService.checkFriendSubscription(request);
 
       return response.status(HttpStatus.OK).json({
         friends,

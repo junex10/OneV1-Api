@@ -87,40 +87,68 @@ export class AppFriendsService {
   }
 
   async getFriends(@Body() request: GetFriendsDTO) {
-    // Friends list who already accepted sender friend petition
-    try {
-      const friends = await this.friendModel.findAndCountAll({
-        where: {
-          // status: Constants.USER.FRIENDS.FOLLOWED,
-          [Op.or]: [
-            { sender_id: request.user_id },
-            { receiver_id: request.user_id },
-          ],
-        },
-        include: [
-          { model: User, as: 'sender', include: [Person] },
-          { model: User, as: 'receiver', include: [Person] },
+    // 1. Find all friends (as before)
+    const friends = await this.friendModel.findAndCountAll({
+      where: {
+        // status: Constants.USER.FRIENDS.FOLLOWED,
+        [Op.or]: [
+          { sender_id: request.user_id },
+          { receiver_id: request.user_id },
         ],
-      });
-      // Filter to return only the friend (not the current user)
-      const friendList = friends.rows.map((friend) => {
-        const user =
-          friend.sender_id === request.user_id
-            ? friend.receiver
-            : friend.sender;
-        return {
-          id: user.id,
-          email: user.email,
-          person: user.person,
-          photo: user.photo,
-          // add any other fields you want to expose
-        };
-      });
+      },
+      include: [
+        { model: User, as: 'sender', include: [Person] },
+        { model: User, as: 'receiver', include: [Person] },
+      ],
+    });
 
-      return { count: friendList.length, friends: friendList };
-    } catch (e) {
-      return null;
-    }
+    // 2. Build a set of user IDs that are already friends (including self)
+    const friendIds = new Set<number>();
+    friends.rows.forEach((friend) => {
+      if (friend.sender_id !== request.user_id) friendIds.add(friend.sender_id);
+      if (friend.receiver_id !== request.user_id)
+        friendIds.add(friend.receiver_id);
+    });
+    friendIds.add(request.user_id); // Exclude self
+
+    // 3. Get random users who are not friends and are normal users
+    const randomUsers = await this.userModel.findAll({
+      where: {
+        id: { [Op.notIn]: Array.from(friendIds) },
+        level_id: Constants.USER.LEVELS.USER,
+      },
+      include: [Person],
+      limit: 10, // You can adjust the number of random users to return
+      order: Sequelize.literal('RAND()'), // For MySQL. Use Sequelize.fn('RANDOM') for SQLite/Postgres
+    });
+
+    // 4. Format the friends list
+    const friendList = friends.rows.map((friend) => {
+      const user =
+        friend.sender_id === request.user_id ? friend.receiver : friend.sender;
+      return {
+        id: user.id,
+        email: user.email,
+        person: user.person,
+        photo: user.photo,
+        // add any other fields you want to expose
+        isFriend: true,
+      };
+    });
+
+    // 5. Format the random users list
+    const randomUserList = randomUsers.map((user) => ({
+      id: user.id,
+      email: user.email,
+      person: user.person,
+      photo: user.photo,
+      isFriend: false,
+    }));
+
+    // 6. Combine and return
+    const combinedList = [...friendList, ...randomUserList];
+
+    return { count: combinedList.length, friends: combinedList };
   }
 
   async checkFriendSubscription(request: CheckFriendSubscriptionDTO) {
