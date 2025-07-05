@@ -146,6 +146,7 @@ export class AppEventsService {
               * sin(radians(CAST(Events.latitude AS DECIMAL(10,7))))
             )
           ) >= ${excludeRadius}
+           AND Events.status != '${Constants.EVENT_STATUS.CLOSED}'
         `),
       });
     } else {
@@ -181,6 +182,7 @@ export class AppEventsService {
               )
             ) >= ${excludeRadius}
             AND Events.event_type_id = ${eventType.id}
+            AND Events.status != '${Constants.EVENT_STATUS.CLOSED}'
           `),
             ],
           },
@@ -209,6 +211,7 @@ export class AppEventsService {
                 * sin(radians(CAST(Events.latitude AS DECIMAL(10,7))))
               )
             ) >= ${excludeRadius}
+             AND Events.status != '${Constants.EVENT_STATUS.CLOSED}'
           `),
               { address: { [Op.like]: `%${request.search}%` } },
             ],
