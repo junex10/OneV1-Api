@@ -404,10 +404,16 @@ export class AppEventsService {
           ],
         });
       } else {
+        // Get the event to check the host (user_id)
+        const event = await this.eventModel.findOne({
+          where: { id: request.event_id },
+        });
+
         viewers = await this.eventsUsersJoined.findAll({
           where: {
             event_id: request.event_id,
-            user_id: { [Op.ne]: request.user_id },
+            // Exclude the host from viewers
+            user_id: { [Op.ne]: event?.user_id },
           },
           include: [
             {
@@ -452,7 +458,6 @@ export class AppEventsService {
           });
         }
       }
-      console.log(comments, ' HERE ');
       return comments;
     } catch (e) {
       return null;

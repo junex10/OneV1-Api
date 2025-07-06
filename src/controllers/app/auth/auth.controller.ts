@@ -64,7 +64,7 @@ export class AppAuthController {
           },
         });
       } else {
-        return response.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+        return response.status(HttpStatus.OK).json({
           error: errorMessage,
         });
       }

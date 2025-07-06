@@ -25,7 +25,8 @@ import {
 import * as fs from 'fs';
 import * as path from 'path';
 import { Op } from 'sequelize';
-import { Globals, Constants } from '..';
+import Globals from './../globals';
+import Constants from './../constants';
 
 @Injectable()
 export class SocketService {
@@ -121,7 +122,7 @@ export class SocketService {
       attachment?.mimeType,
     );
     const filePath = path.join(dir, hashedFileName);
-    fs.writeFileSync(filePath, Buffer.from(attachment.base64, 'base64'));
+    await fs.writeFileSync(filePath, Buffer.from(attachment.base64, 'base64'));
     // Save the relative path in DB
     await this.chatsModel.create({
       chat_session_id: request.chat_session_id,
@@ -239,8 +240,6 @@ export class SocketService {
     });
     const numberCurrentLikes = Number(currentLikes.likes);
 
-    console.log(likeCheck, likes, ' HERE ');
-
     if (!likeCheck) {
       likes = numberCurrentLikes + 1;
       await this.eventsLikeModel.create({
@@ -288,7 +287,7 @@ export class SocketService {
       {
         where: {
           expiration_time: { [Op.lte]: thirtyMinutesFromNow, [Op.gt]: now },
-          status: Constants.EVENT_STATUS.ACTIVE,
+          //status: Constants.EVENT_STATUS.ACTIVE,
         },
       },
     );
@@ -299,7 +298,7 @@ export class SocketService {
       {
         where: {
           expiration_time: { [Op.lt]: now },
-          status: Constants.EVENT_STATUS.ALMOST_FINISHED, //(THEY ARE ALMOST FINISHED IN STATUS SO WE SWAP IT TO FINISHED)
+          //status: Constants.EVENT_STATUS.ALMOST_FINISHED, //(THEY ARE ALMOST FINISHED IN STATUS SO WE SWAP IT TO FINISHED)
         },
       },
     );
@@ -311,7 +310,7 @@ export class SocketService {
         where: {
           starting_event: { [Op.lte]: now },
           expiration_time: { [Op.gt]: now },
-          status: Constants.EVENT_STATUS.PENDING, // THEY'RE PENDING AND WE UPDATE THEIR STATUS TO ACTIVE
+          //status: Constants.EVENT_STATUS.PENDING, // THEY'RE PENDING AND WE UPDATE THEIR STATUS TO ACTIVE
         },
       },
     );

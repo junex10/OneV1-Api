@@ -38,6 +38,9 @@ export class Events extends Model {
   users_joined_event: EventsUsersJoined;
 
   @Column
+  user_id: number;
+
+  @Column
   title: string;
 
   @Column
