@@ -90,7 +90,6 @@ export class AppFriendsService {
     // 1. Find all friends (as before)
     const friends = await this.friendModel.findAndCountAll({
       where: {
-        // status: Constants.USER.FRIENDS.FOLLOWED,
         [Op.or]: [
           { sender_id: request.user_id },
           { receiver_id: request.user_id },
@@ -111,18 +110,7 @@ export class AppFriendsService {
     });
     friendIds.add(request.user_id); // Exclude self
 
-    // 3. Get random users who are not friends and are normal users
-    const randomUsers = await this.userModel.findAll({
-      where: {
-        id: { [Op.notIn]: Array.from(friendIds) },
-        level_id: Constants.USER.LEVELS.USER,
-      },
-      include: [Person],
-      limit: 10, // You can adjust the number of random users to return
-      order: Sequelize.literal('RAND()'), // For MySQL. Use Sequelize.fn('RANDOM') for SQLite/Postgres
-    });
-
-    // 4. Format the friends list
+    // 3. Format the friends list (prioritized)
     const friendList = friends.rows.map((friend) => {
       const user =
         friend.sender_id === request.user_id ? friend.receiver : friend.sender;
@@ -131,12 +119,22 @@ export class AppFriendsService {
         email: user.email,
         person: user.person,
         photo: user.photo,
-        // add any other fields you want to expose
         isFriend: true,
       };
     });
 
-    // 5. Format the random users list
+    // 4. Get random users who are not friends and are normal users
+    const randomUsers = await this.userModel.findAll({
+      where: {
+        id: { [Op.notIn]: Array.from(friendIds) },
+        level_id: Constants.USER.LEVELS.USER,
+      },
+      include: [Person],
+      limit: 10,
+      order: Sequelize.literal('RAND()'),
+    });
+
+    // 5. Format the random users list (non-friends)
     const randomUserList = randomUsers.map((user) => ({
       id: user.id,
       email: user.email,
@@ -145,7 +143,7 @@ export class AppFriendsService {
       isFriend: false,
     }));
 
-    // 6. Combine and return
+    // 6. Combine: friends first, then others
     const combinedList = [...friendList, ...randomUserList];
 
     return { count: combinedList.length, friends: combinedList };
