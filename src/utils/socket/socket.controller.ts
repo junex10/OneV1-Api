@@ -39,6 +39,7 @@ export class SocketController {
 
   @SubscribeMessage(SocketEvents.USER_LOCATION)
   onUserLocation(client, data: SocketCoordinates) {
+    console.log(data, ' RECEIVING HEHE ');
     this.socketService.setUserLocation(data);
     return { data };
   }
