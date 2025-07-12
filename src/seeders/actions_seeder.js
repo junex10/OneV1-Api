@@ -25,9 +25,16 @@ module.exports = {
       {
         id: 3,
         main: Constants.SEEDERS.ACTIONS.MAIN,
-        module_id: Constants.SEEDERS.MODULES.TESTING,
-        name: 'Testing',
-        code: '/test',
+        module_id: Constants.SEEDERS.MODULES.FRIENDS,
+        name: 'Friends',
+        code: '/friends',
+      },
+      {
+        id: 4,
+        main: Constants.SEEDERS.ACTIONS.MAIN,
+        module_id: Constants.SEEDERS.MODULES.EVENTS,
+        name: 'Events',
+        code: '/events',
       },
     ];
     return queryInterface.bulkInsert('actions', items);

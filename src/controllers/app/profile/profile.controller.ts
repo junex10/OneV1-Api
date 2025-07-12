@@ -4,19 +4,19 @@ import {
   Post,
   Res,
   HttpStatus,
-  UseInterceptors,
-  UploadedFile,
   UnprocessableEntityException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AppProfileService } from './profile.service';
-import { Constants, UploadFile, JWTAuth } from 'src/utils';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { JWTAuth } from 'src/utils';
 import { UpdateUserDTO } from './profile.entity';
 import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
+import { AppInterceptor } from 'src/interceptors';
 
 @ApiTags('Profile - App')
 @Controller('api/app/profile')
+@UseInterceptors(AppInterceptor)
 export class AppProfileController {
   constructor(private readonly profileService: AppProfileService) {}
 

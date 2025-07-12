@@ -47,9 +47,10 @@ export default {
     NO_MAIN: 0,
   },
   MODULES: {
-    PROFILE: '/dashboard/profile',
-    RECIPES: '/recipes',
-    TESTING: '/test',
+    PROFILE: '/profile',
+    CHAT: '/chat',
+    FRIENDS: '/friends',
+    EVENTS: '/events',
   },
   EVENT_STATUS: {
     PENDING: 0, // -> Schedule to start later, not started

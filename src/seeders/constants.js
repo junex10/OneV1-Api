@@ -38,7 +38,8 @@ module.exports = {
     MODULES: {
       PROFILE: 1,
       CHAT: 2,
-      TESTING: 3,
+      FRIENDS: 3,
+      EVENTS: 4,
     },
     ACTIONS: {
       MAIN: 1,

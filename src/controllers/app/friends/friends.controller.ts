@@ -1,16 +1,12 @@
 import {
   Controller,
   Post,
-  Get,
   Res,
   HttpStatus,
   Body,
   UseInterceptors,
-  UploadedFile,
-  Param,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import {
@@ -19,9 +15,11 @@ import {
   CheckFriendSubscriptionDTO,
 } from './friends.entity';
 import { AppFriendsService } from './friends.service';
+import { AppInterceptor } from 'src/interceptors';
 
 @ApiTags('App - Friends')
 @Controller('api/app/friends')
+@UseInterceptors(AppInterceptor)
 export class AppFriendsController {
   constructor(private readonly friendService: AppFriendsService) {}
 

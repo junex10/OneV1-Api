@@ -9,7 +9,6 @@ import { HomeModule } from './web/home/home.module';
 
 import { AppAuthModule } from './app/auth/auth.module';
 import { AppMapModule } from './app/map/map.module';
-import { AppTestMapModule } from './app/test/test_map.module';
 import { AppEventsModule } from './app/events/events.module';
 import { AppProfileModule } from './app/profile/profile.module';
 import { ChatModule } from './app/chat/chat.module';
@@ -24,7 +23,6 @@ export {
   // App
   AppAuthModule,
   AppMapModule,
-  AppTestMapModule,
   AppEventsModule,
   AppProfileModule,
   ChatModule,

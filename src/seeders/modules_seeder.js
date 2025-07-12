@@ -24,9 +24,16 @@ module.exports = {
       },
       {
         id: 3,
-        name: 'Testing', // This allow to test the database uploading JSON
-        icon: 'test',
-        code: 'test',
+        name: 'Friends',
+        icon: 'friends',
+        code: 'friends',
+        status: Constants.SEEDERS.MODULES_STATUS.AVAILABLE,
+      },
+      {
+        id: 4,
+        name: 'Events',
+        icon: 'events',
+        code: 'events',
         status: Constants.SEEDERS.MODULES_STATUS.AVAILABLE,
       },
     ];

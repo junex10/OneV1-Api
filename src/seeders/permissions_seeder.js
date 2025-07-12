@@ -11,15 +11,19 @@ module.exports = {
 
     items = [
       {
-        action_id: 1,
+        action_id: Constants.SEEDERS.MODULES.PROFILE,
         level_id: Constants.USERS.LEVELS.ADMIN,
       },
       {
-        action_id: 2,
+        action_id: Constants.SEEDERS.MODULES.CHAT,
         level_id: Constants.USERS.LEVELS.ADMIN,
       },
       {
-        action_id: 3,
+        action_id: Constants.SEEDERS.MODULES.FRIENDS,
+        level_id: Constants.USERS.LEVELS.ADMIN,
+      },
+      {
+        action_id: Constants.SEEDERS.MODULES.EVENTS,
         level_id: Constants.USERS.LEVELS.ADMIN,
       },
     ];
@@ -27,11 +31,19 @@ module.exports = {
 
     items = [
       {
-        action_id: 1,
+        action_id: Constants.SEEDERS.MODULES.PROFILE,
         level_id: Constants.USERS.LEVELS.USER,
       },
       {
-        action_id: 2,
+        action_id: Constants.SEEDERS.MODULES.CHAT,
+        level_id: Constants.USERS.LEVELS.USER,
+      },
+      {
+        action_id: Constants.SEEDERS.MODULES.FRIENDS,
+        level_id: Constants.USERS.LEVELS.USER,
+      },
+      {
+        action_id: Constants.SEEDERS.MODULES.EVENTS,
         level_id: Constants.USERS.LEVELS.USER,
       },
     ];

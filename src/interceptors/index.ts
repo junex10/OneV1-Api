@@ -1,4 +1,4 @@
 import { ProfileInterceptor } from './profile.interceptor';
-import { TestingInterceptor } from './testing.interceptor';
+import { AppInterceptor } from './app.interceptor';
 
-export { ProfileInterceptor, TestingInterceptor };
+export { ProfileInterceptor, AppInterceptor };

@@ -19,11 +19,6 @@ import {
 } from './socket.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
-const HEADERS = {
-  Accept: 'application/json',
-  'Content-Type': 'application/json',
-};
-
 @WebSocketGateway({ cors: { origin: '*' }, maxHttpBufferSize: 5e6 })
 export class SocketController {
   @WebSocketServer() server: Server;
@@ -39,7 +34,6 @@ export class SocketController {
 
   @SubscribeMessage(SocketEvents.USER_LOCATION)
   onUserLocation(client, data: SocketCoordinates) {
-    console.log(data, ' RECEIVING HEHE ');
     this.socketService.setUserLocation(data);
     return { data };
   }

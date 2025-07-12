@@ -1,23 +1,21 @@
 import {
   Controller,
   Post,
-  Get,
   Res,
   HttpStatus,
   Body,
   UseInterceptors,
-  UploadedFile,
-  Param,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { Coordinates, Route } from './map.entity';
 import { AppMapService } from './map.service';
+import { AppInterceptor } from 'src/interceptors';
 
 @ApiTags('App - Map')
 @Controller('api/app/map')
+@UseInterceptors(AppInterceptor)
 export class AppMapController {
   constructor(private readonly mapService: AppMapService) {}
   @Post('/placesNearby')

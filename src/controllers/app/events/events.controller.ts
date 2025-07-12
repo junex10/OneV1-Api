@@ -1,16 +1,12 @@
 import {
   Controller,
   Post,
-  Get,
   Res,
   HttpStatus,
   Body,
   UseInterceptors,
-  UploadedFile,
-  Param,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import {
@@ -24,9 +20,11 @@ import {
   SetEventDTO,
 } from './event.entity';
 import { AppEventsService } from './events.service';
+import { AppInterceptor } from 'src/interceptors';
 
 @ApiTags('App - Events')
 @Controller('api/app/events')
+@UseInterceptors(AppInterceptor)
 export class AppEventsController {
   constructor(private readonly eventService: AppEventsService) {}
 

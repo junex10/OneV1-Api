@@ -20,7 +20,6 @@ import {
   // App
   AppAuthModule,
   AppMapModule,
-  AppTestMapModule,
   AppEventsModule,
   AppProfileModule,
   ChatModule,
@@ -93,7 +92,6 @@ import {
 
     AppAuthModule,
     AppMapModule,
-    AppTestMapModule,
     AppEventsModule,
     AppProfileModule,
     ChatModule,

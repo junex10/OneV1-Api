@@ -6,11 +6,8 @@ import {
   Body,
   UnprocessableEntityException,
   Delete,
-  Get,
   UseInterceptors,
-  UploadedFiles,
 } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import {
@@ -21,10 +18,11 @@ import {
   ViewedDTO,
 } from './chat.entity';
 import { ChatService } from './chat.service';
-import { UploadFile } from 'src/utils';
+import { AppInterceptor } from 'src/interceptors';
 
 @ApiTags('Chat')
 @Controller('api/app/chat')
+@UseInterceptors(AppInterceptor)
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
