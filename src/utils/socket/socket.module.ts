@@ -12,7 +12,6 @@ import {
   EventComments,
   EventLikesUser,
 } from 'src/models';
-import { ServicesModule } from '../../services/services.module';
 
 @Global()
 @Module({
@@ -28,7 +27,6 @@ import { ServicesModule } from '../../services/services.module';
       EventComments,
       EventLikesUser,
     ]),
-    ServicesModule,
   ],
   exports: [SocketService],
   providers: [SocketService],
