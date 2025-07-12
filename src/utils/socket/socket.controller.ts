@@ -18,6 +18,7 @@ import {
   SocketNewPicChatMessage,
 } from './socket.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { FirebaseService } from './../../services/firebase.service';
 
 const HEADERS = {
   Accept: 'application/json',
@@ -28,7 +29,10 @@ const HEADERS = {
 export class SocketController {
   @WebSocketServer() server: Server;
 
-  constructor(private readonly socketService: SocketService) {}
+  constructor(
+    private readonly socketService: SocketService,
+    private readonly firebaseService: FirebaseService,
+  ) {}
 
   @SubscribeMessage('test')
   onEvent(client, data: any) {
@@ -37,9 +41,30 @@ export class SocketController {
     return { test: ' JUST TESTING ', data };
   }
 
+  @SubscribeMessage('firebase-test')
+  async onFirebaseTesting(client, data: any) {
+    const token = data?.token;
+    if (!token) {
+      return { success: false, error: 'No FCM token provided' };
+    }
+    const admin = this.firebaseService.getAdmin();
+    const message = {
+      notification: {
+        title: 'Socket Test',
+        body: 'Push notification from SocketController!',
+      },
+      token,
+    };
+    try {
+      const response = await admin.messaging().send(message);
+      return { success: true, response };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
   @SubscribeMessage(SocketEvents.USER_LOCATION)
   onUserLocation(client, data: SocketCoordinates) {
-    console.log(data, ' RECEIVING HEHE ');
     this.socketService.setUserLocation(data);
     return { data };
   }

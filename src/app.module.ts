@@ -27,6 +27,8 @@ import {
   AppFriendsModule,
 } from 'src/controllers';
 
+import { ServicesModule } from './services/services.module';
+
 // Models
 import {
   Level,
@@ -99,9 +101,9 @@ import {
     ChatModule,
     AppFriendsModule,
 
+    ServicesModule,
     ScheduleModule.forRoot(),
   ],
   providers: [SocketController],
-  controllers: [],
 })
 export class AppModule {}
