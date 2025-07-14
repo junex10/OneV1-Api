@@ -71,3 +71,7 @@ export class GetCommentsDTO {
   @ApiProperty({ required: false })
   last_comment?: boolean;
 }
+export class GetAllPopularEventsDTO {
+  @ApiProperty({ required: true })
+  user_id?: number;
+}

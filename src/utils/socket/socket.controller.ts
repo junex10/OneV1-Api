@@ -76,11 +76,11 @@ export class SocketController {
 
   @SubscribeMessage(SocketEvents.EVENTS.USER_LEFT)
   async onUserLeftEvent(client, data: SocketJoinEventDTO) {
-    client.leave(`event_${data.event_id}`);
     const newData = await this.socketService.onUserLeftEvent(data);
     this.server
       .to(`event_${data.event_id}`)
       .emit(SocketEvents.EVENTS.USER_LEFT, { data: newData });
+    client.leave(`event_${data.event_id}`);
     return { data: newData };
   }
 

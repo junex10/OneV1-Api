@@ -20,7 +20,6 @@ export class AppInterceptor implements NestInterceptor {
         jwt = JWTAuth.readToken(auth)?.permissions;
       } catch (err: any) {
         if (err.name === 'TokenExpiredError') {
-          console.log(err.name, ' GETTING TOKEN DO');
           throw new HttpException(
             { app_session_expired: true },
             HttpStatus.NO_CONTENT,

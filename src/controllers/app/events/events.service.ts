@@ -12,6 +12,7 @@ import {
 } from 'src/models';
 import {
   GetAllMyEventsDTO,
+  GetAllPopularEventsDTO,
   GetCommentsDTO,
   GetEventDTO,
   GetEventsByUserDTO,
@@ -375,7 +376,11 @@ export class AppEventsService {
     const uniqueEvents = [];
     const seen = new Set();
     for (const e of allEvents) {
-      if (e && !seen.has(e.id)) {
+      if (
+        e &&
+        !seen.has(e.id) &&
+        !(e.users_joined && e.users_joined >= 1000) // Exclude popular events
+      ) {
         // Add joined property
         uniqueEvents.push({
           ...(e.get ? e.get({ plain: true }) : e), // flatten sequelize instance if needed
@@ -459,6 +464,23 @@ export class AppEventsService {
         }
       }
       return comments;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  getAllPopularEvents = async (request: GetAllPopularEventsDTO) => {
+    try {
+      // Find all events with users_joined >= 1000 and not closed
+      const popularEvents = await this.eventModel.findAll({
+        where: {
+          users_joined: { [Op.gte]: 1000 }, // Over 1000 is popoular
+          status: { [Op.ne]: Constants.EVENT_STATUS.CLOSED },
+        },
+        order: [['users_joined', 'DESC']],
+        limit: 10,
+      });
+      return popularEvents;
     } catch (e) {
       return null;
     }
