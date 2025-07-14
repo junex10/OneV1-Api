@@ -14,7 +14,15 @@ export class AppInterceptor implements NestInterceptor {
     const auth = context.getArgs()[0]?.headers?.authorization;
     if (auth !== '' && auth !== undefined) {
       console.log(auth, ' GETTING TOKEN DO');
-      const jwt = JWTAuth.readToken(auth)?.permissions;
+      let jwt;
+      try {
+        jwt = JWTAuth.readToken(auth)?.permissions;
+      } catch (err: any) {
+        if (err.name === 'TokenExpiredError') {
+          throw new ForbiddenException('Token expired');
+        }
+        throw new ForbiddenException('Invalid token');
+      }
       const requiredCodes = [
         Constants.MODULES.FRIENDS,
         Constants.MODULES.CHAT,

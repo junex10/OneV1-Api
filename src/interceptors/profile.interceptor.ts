@@ -13,7 +13,15 @@ export class ProfileInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const auth = context.getArgs()[0]?.headers?.authorization;
     if (auth !== '' && auth !== undefined) {
-      const jwt = JWTAuth.readToken(auth)?.permissions;
+      let jwt;
+      try {
+        jwt = JWTAuth.readToken(auth)?.permissions;
+      } catch (err: any) {
+        if (err.name === 'TokenExpiredError') {
+          throw new ForbiddenException('Token expired');
+        }
+        throw new ForbiddenException('Invalid token');
+      }
       const main = jwt.filter(
         (x) =>
           x.actions.main === Constants.ACTIONS.MAIN &&
