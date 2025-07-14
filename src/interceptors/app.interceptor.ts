@@ -4,6 +4,8 @@ import {
   ExecutionContext,
   CallHandler,
   ForbiddenException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { JWTAuth, Constants } from 'src/utils';
@@ -18,7 +20,11 @@ export class AppInterceptor implements NestInterceptor {
         jwt = JWTAuth.readToken(auth)?.permissions;
       } catch (err: any) {
         if (err.name === 'TokenExpiredError') {
-          throw new ForbiddenException('Token expired');
+          console.log(err.name, ' GETTING TOKEN DO');
+          throw new HttpException(
+            { app_session_expired: true },
+            HttpStatus.NO_CONTENT,
+          );
         }
         throw new ForbiddenException('Invalid token');
       }
