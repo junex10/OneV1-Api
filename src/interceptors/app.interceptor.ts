@@ -13,7 +13,6 @@ export class AppInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const auth = context.getArgs()[0]?.headers?.authorization;
     if (auth !== '' && auth !== undefined) {
-      console.log(auth, ' GETTING TOKEN DO');
       let jwt;
       try {
         jwt = JWTAuth.readToken(auth)?.permissions;
