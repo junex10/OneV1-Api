@@ -48,6 +48,8 @@ import {
   Friends,
   EventsUsersJoined,
   EventComments,
+  EventPost,
+  EventPostLikes,
 } from './models';
 
 @Module({
@@ -76,6 +78,8 @@ import {
         Friends,
         EventsUsersJoined,
         EventComments,
+        EventPost,
+        EventPostLikes,
       ],
     }),
     MailerModule.forRoot(MAIL_CONFIG),

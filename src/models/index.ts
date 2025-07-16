@@ -18,6 +18,8 @@ import { UsersCode } from './users_code';
 import { Friends } from './friends';
 import { EventsUsersJoined } from './events_user_joined';
 import { EventComments } from './events_comment';
+import { EventPost } from './event_post';
+import { EventPostLikes } from './event_post_likes';
 
 export {
   Level,
@@ -40,4 +42,6 @@ export {
   Friends,
   EventsUsersJoined,
   EventComments,
+  EventPost,
+  EventPostLikes,
 };
