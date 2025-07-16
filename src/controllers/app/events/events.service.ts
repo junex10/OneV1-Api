@@ -281,6 +281,35 @@ export class AppEventsService {
   async getAllMyEvents(@Body() request: GetAllMyEventsDTO) {
     let allEvents = [];
 
+    const radius = 80000; // Value in meters
+    const excludeRadius = 5;
+
+    // All the events that we havent joined, that our friends aint not hosting but are close to us
+
+    const closeEvents = await this.eventModel.findAll({
+      where: Sequelize.literal(`
+          (
+            6371000 * acos(
+              cos(radians(${request.latitude}))
+              * cos(radians(CAST(Events.latitude AS DECIMAL(10,7))))
+              * cos(radians(CAST(Events.longitude AS DECIMAL(10,7))) - radians(${request.longitude}))
+              + sin(radians(${request.latitude}))
+              * sin(radians(CAST(Events.latitude AS DECIMAL(10,7))))
+            )
+          ) < ${radius}
+          AND (
+            6371000 * acos(
+              cos(radians(${request.latitude}))
+              * cos(radians(CAST(Events.latitude AS DECIMAL(10,7))))
+              * cos(radians(CAST(Events.longitude AS DECIMAL(10,7))) - radians(${request.longitude}))
+              + sin(radians(${request.latitude}))
+              * sin(radians(CAST(Events.latitude AS DECIMAL(10,7))))
+            )
+          ) >= ${excludeRadius}
+           AND Events.status != '${Constants.EVENT_STATUS.CLOSED}'
+        `),
+    });
+
     // All the events that the current user is hosting
 
     const hostingEvents = await this.eventModel.findAll({
@@ -370,6 +399,7 @@ export class AppEventsService {
       ...joinedEvents.map((j) => j.event),
       ...friendsHostingEvents,
       ...friendsJoinedUnique,
+      ...closeEvents,
     ];
 
     // Remove possible nulls and duplicates by event id

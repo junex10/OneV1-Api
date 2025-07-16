@@ -56,6 +56,10 @@ export class GetEventsTypeDTO {
 export class GetAllMyEventsDTO {
   @ApiProperty({ required: true })
   user_id?: number;
+  @ApiProperty({ required: true })
+  latitude: number;
+  @ApiProperty({ required: true })
+  longitude: number;
 }
 export class GetViewersDTO {
   @ApiProperty({ required: true })
