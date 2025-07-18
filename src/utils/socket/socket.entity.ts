@@ -50,4 +50,5 @@ export class SocketNewEventPost {
 export class SocketNewEventPostLike {
   event_id: number;
   user_id: number;
+  real_event_id: number;
 }

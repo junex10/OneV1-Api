@@ -23,6 +23,7 @@ import {
   SocketNewEventComment,
   SocketNewEventLike,
   SocketNewEventPost,
+  SocketNewEventPostLike,
   SocketNewPicChatMessage,
 } from './socket.entity';
 import * as fs from 'fs';
@@ -338,6 +339,54 @@ export class SocketService {
         e.message,
       );
     }
+  };
+
+  onNewEventPostLike = async (request: SocketNewEventPostLike) => {
+    console.log('HI');
+    // Check if the user already liked the post
+    const likeCheck = await this.eventsPostLikesModel.findOne({
+      where: {
+        event_id: request.event_id,
+        user_id: request.user_id,
+      },
+    });
+
+    // Get the post
+    const post = await this.eventsPostModel.findOne({
+      where: { id: request.event_id },
+    });
+
+    let likes = Number(post?.likes) || 0;
+
+    if (likeCheck) {
+      // User already liked, so dislike (remove like)
+      await this.eventsPostLikesModel.destroy({
+        where: {
+          event_id: request.event_id,
+          user_id: request.user_id,
+        },
+      });
+      likes = Math.max(0, likes - 1);
+    } else {
+      // User has not liked, so add like
+      await this.eventsPostLikesModel.create({
+        event_id: request.event_id,
+        user_id: request.user_id,
+      });
+      likes = likes + 1;
+    }
+
+    // Update the like count in the post
+    await this.eventsPostModel.update(
+      { likes },
+      { where: { id: request.event_id } },
+    );
+
+    // Return the updated post
+    return await this.eventsPostModel.findOne({
+      where: { id: request.event_id },
+      include: [{ model: User, include: [{ model: Person }] }],
+    });
   };
 
   // Crons

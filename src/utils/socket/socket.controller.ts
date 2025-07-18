@@ -16,6 +16,7 @@ import {
   SocketNewEventComment,
   SocketNewEventLike,
   SocketNewEventPost,
+  SocketNewEventPostLike,
   SocketNewPicChatMessage,
 } from './socket.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -109,6 +110,15 @@ export class SocketController {
     this.server
       .to(`event_${data.event_id}`)
       .emit(SocketEvents.EVENTS.NEW_POST, { post: newData });
+    return { post: newData };
+  }
+
+  @SubscribeMessage(SocketEvents.EVENTS.NEW_POST_LIKE)
+  async onNewEventPostLike(client, data: SocketNewEventPostLike) {
+    const newData = await this.socketService.onNewEventPostLike(data);
+    this.server
+      .to(`event_${data.real_event_id}`)
+      .emit(SocketEvents.EVENTS.NEW_POST_LIKE, { post: newData });
     return { post: newData };
   }
 
