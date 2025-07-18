@@ -9,6 +9,8 @@ import {
   EventsUsersJoined,
   Friends,
   EventComments,
+  EventPost,
+  EventPostLikes,
 } from 'src/models';
 import {
   GetAllMyEventsDTO,
@@ -18,6 +20,7 @@ import {
   GetEventsByUserDTO,
   GetEventsDTO,
   GetEventsTypeDTO,
+  GetPostsDTO,
   GetViewersDTO,
   SetEventDTO,
 } from './event.entity';
@@ -34,6 +37,9 @@ export class AppEventsService {
   constructor(
     @InjectModel(Person) private personModel: typeof Person,
     @InjectModel(Events) private eventModel: typeof Events,
+    @InjectModel(EventPost) private eventPostModel: typeof EventPost,
+    @InjectModel(EventPostLikes)
+    private eventPostLikesModel: typeof EventPostLikes,
     @InjectModel(EventsType) private eventTypeModel: typeof EventsType,
     @InjectModel(EventComments)
     private eventsCommentModel: typeof EventComments,
@@ -496,6 +502,25 @@ export class AppEventsService {
       return comments;
     } catch (e) {
       return null;
+    }
+  };
+
+  getPosts = async (request: GetPostsDTO) => {
+    try {
+      if (!request.event_id) return [];
+      const posts = await this.eventPostModel.findAll({
+        where: { event_id: request.event_id },
+        include: [
+          {
+            model: User,
+            include: [{ model: Person }],
+          },
+        ],
+        order: [['id', 'DESC']],
+      });
+      return posts;
+    } catch (e) {
+      return [];
     }
   };
 

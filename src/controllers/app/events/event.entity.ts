@@ -79,3 +79,9 @@ export class GetAllPopularEventsDTO {
   @ApiProperty({ required: true })
   user_id?: number;
 }
+export class GetPostsDTO {
+  @ApiProperty({ required: true })
+  user_id?: number;
+  @ApiProperty({ required: true })
+  event_id?: number;
+}

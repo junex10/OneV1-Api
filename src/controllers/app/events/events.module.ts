@@ -13,6 +13,8 @@ import {
   EventsUsersJoined,
   Friends,
   EventComments,
+  EventPost,
+  EventPostLikes,
 } from 'src/models';
 import { HttpModule } from '@nestjs/axios';
 
@@ -28,6 +30,8 @@ import { HttpModule } from '@nestjs/axios';
       EventLikesUser,
       EventsUsersJoined,
       Friends,
+      EventPost,
+      EventPostLikes,
       EventComments,
     ]),
     HttpModule,
