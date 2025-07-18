@@ -7,6 +7,8 @@ import {
   ChatUsers,
   EventComments,
   EventLikesUser,
+  EventPost,
+  EventPostLikes,
   Events,
   EventsUsersJoined,
   Person,
@@ -20,6 +22,7 @@ import {
   SocketNewChatMessage,
   SocketNewEventComment,
   SocketNewEventLike,
+  SocketNewEventPost,
   SocketNewPicChatMessage,
 } from './socket.entity';
 import * as fs from 'fs';
@@ -38,6 +41,9 @@ export class SocketService {
     @InjectModel(ChatSession) private chatSessionModel: typeof ChatSession,
     @InjectModel(EventLikesUser) private eventsLikeModel: typeof EventLikesUser,
     @InjectModel(Events) private eventsModel: typeof Events,
+    @InjectModel(EventPost) private eventsPostModel: typeof EventPost,
+    @InjectModel(EventPostLikes)
+    private eventsPostLikesModel: typeof EventPostLikes,
     @InjectModel(EventComments)
     private eventsCommentModel: typeof EventComments,
     @InjectModel(EventsUsersJoined)
@@ -273,6 +279,65 @@ export class SocketService {
     return await this.eventsModel.findOne({
       where: { id: request.event_id },
     });
+  };
+
+  onNewEventPost = async (request: SocketNewEventPost) => {
+    try {
+      let attachmentPath = null;
+      if (request.attachment) {
+        // Save attachment if provided
+        const dir = path.resolve(
+          process.cwd(),
+          'public',
+          'storage',
+          'event_posts',
+        );
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, { recursive: true });
+        }
+        const hashedFileName = Globals.hashPic(
+          request.attachment?.fileName,
+          request.attachment?.mimeType,
+        );
+        const filePath = path.join(dir, hashedFileName);
+        fs.writeFileSync(
+          filePath,
+          Buffer.from(request.attachment.base64, 'base64'),
+        );
+        attachmentPath = `event_posts/${hashedFileName}`;
+      }
+
+      // Create the new post with optional latitude and longitude
+      const newPost = await this.eventsPostModel.create({
+        event_id: request.event_id,
+        user_id: request.user_id,
+        content: request.content,
+        attachment: attachmentPath,
+        latitude: request?.latitude ? request.latitude : null,
+        longitude: request?.longitude ? request.longitude : null,
+        likes: 1, // Default likes
+      });
+
+      // Create the first like for the post from the creator
+      await this.eventsPostLikesModel.create({
+        event_id: newPost.id,
+        user_id: request.user_id,
+      });
+
+      const post = await this.eventsPostModel.findOne({
+        where: {
+          id: newPost.id,
+        },
+        include: [{ model: User }],
+      });
+
+      return post;
+    } catch (e) {
+      throw new UnprocessableEntityException(
+        'Could not create post',
+        e.message,
+      );
+    }
   };
 
   // Crons

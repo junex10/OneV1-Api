@@ -39,3 +39,15 @@ export class SocketNewEventLike {
   event_id: number;
   user_id: number;
 }
+export class SocketNewEventPost {
+  event_id: number;
+  user_id: number;
+  content: string;
+  latitude: number;
+  longitude: number;
+  attachment?: any;
+}
+export class SocketNewEventPostLike {
+  event_id: number;
+  user_id: number;
+}

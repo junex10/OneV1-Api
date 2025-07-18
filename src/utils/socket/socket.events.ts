@@ -8,5 +8,6 @@ export default {
     USER_LEFT: 'event/user-left-event',
     NEW_COMMENT: 'event/new-comment',
     NEW_LIKE: 'event/new-like',
+    NEW_POST: 'event/new-post',
   },
 };

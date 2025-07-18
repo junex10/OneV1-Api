@@ -15,6 +15,7 @@ import {
   SocketNewChatMessage,
   SocketNewEventComment,
   SocketNewEventLike,
+  SocketNewEventPost,
   SocketNewPicChatMessage,
 } from './socket.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -102,10 +103,19 @@ export class SocketController {
     return { comment: newData };
   }
 
+  @SubscribeMessage(SocketEvents.EVENTS.NEW_POST)
+  async onNewEventPost(client, data: SocketNewEventPost) {
+    const newData = await this.socketService.onNewEventPost(data);
+    this.server
+      .to(`event_${data.event_id}`)
+      .emit(SocketEvents.EVENTS.NEW_POST, { post: newData });
+    return { post: newData };
+  }
+
   // CRONS - Events
 
-  @Cron(CronExpression.EVERY_MINUTE) // We're gonna check events that are ready to start, this is for events that we are host and also check other ones that are expired
+  /* @Cron(CronExpression.EVERY_MINUTE) // We're gonna check events that are ready to start, this is for events that we are host and also check other ones that are expired
   async checkActiveEvents() {
     await this.socketService.checkActiveEvents();
-  }
+  }*/
 }
