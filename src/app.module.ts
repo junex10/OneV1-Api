@@ -24,6 +24,7 @@ import {
   AppProfileModule,
   ChatModule,
   AppFriendsModule,
+  AppNotificationsModule,
 } from 'src/controllers';
 
 // Models
@@ -100,6 +101,7 @@ import {
     AppProfileModule,
     ChatModule,
     AppFriendsModule,
+    AppNotificationsModule,
 
     ScheduleModule.forRoot(),
   ],

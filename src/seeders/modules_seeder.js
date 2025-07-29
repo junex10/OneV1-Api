@@ -36,6 +36,13 @@ module.exports = {
         code: 'events',
         status: Constants.SEEDERS.MODULES_STATUS.AVAILABLE,
       },
+      {
+        id: 5,
+        name: 'Notifications',
+        icon: 'notifications',
+        code: 'notifications',
+        status: Constants.SEEDERS.MODULES_STATUS.AVAILABLE,
+      },
     ];
     return queryInterface.bulkInsert('modules', items);
   },

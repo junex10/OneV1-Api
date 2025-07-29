@@ -18,6 +18,7 @@ import {
   SocketNewEventPost,
   SocketNewEventPostLike,
   SocketNewPicChatMessage,
+  SocketOnUserSocket,
 } from './socket.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
@@ -32,6 +33,24 @@ export class SocketController {
     const event = 'test';
     console.log('TEST');
     return { test: ' JUST TESTING ', data };
+  }
+
+  @SubscribeMessage(SocketEvents.USER_SOCKET)
+  async onUserSocket(client, data: SocketOnUserSocket) {
+    client.join(`user_socket_${data.user_id}`);
+    this.server
+      .to(`user_socket_${data.user_id}`)
+      .emit(SocketEvents.USER_SOCKET, { user_id: data.user_id });
+    return { user_id: data.user_id };
+  }
+
+  @SubscribeMessage(SocketEvents.USER_LEFT_SOCKET)
+  async onUserLeftSocket(client, data: SocketOnUserSocket) {
+    this.server
+      .to(`user_socket_${data.user_id}`)
+      .emit(SocketEvents.USER_LEFT_SOCKET, { user_id: data.user_id });
+    client.leave(`user_socket_${data.user_id}`);
+    return { user_id: data.user_id };
   }
 
   @SubscribeMessage(SocketEvents.USER_LOCATION)
@@ -124,8 +143,8 @@ export class SocketController {
 
   // CRONS - Events
 
-  /* @Cron(CronExpression.EVERY_MINUTE) // We're gonna check events that are ready to start, this is for events that we are host and also check other ones that are expired
+  @Cron(CronExpression.EVERY_MINUTE) // We're gonna check events that are ready to start, this is for events that we are host and also check other ones that are expired
   async checkActiveEvents() {
     await this.socketService.checkActiveEvents();
-  }*/
+  }
 }

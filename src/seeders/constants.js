@@ -40,6 +40,7 @@ module.exports = {
       CHAT: 2,
       FRIENDS: 3,
       EVENTS: 4,
+      NOTIFICATIONS: 5,
     },
     ACTIONS: {
       MAIN: 1,

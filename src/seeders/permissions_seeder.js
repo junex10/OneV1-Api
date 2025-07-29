@@ -26,6 +26,10 @@ module.exports = {
         action_id: Constants.SEEDERS.MODULES.EVENTS,
         level_id: Constants.USERS.LEVELS.ADMIN,
       },
+      {
+        action_id: Constants.SEEDERS.MODULES.NOTIFICATIONS,
+        level_id: Constants.USERS.LEVELS.ADMIN,
+      },
     ];
     queryInterface.bulkInsert('permissions', items);
 
@@ -44,6 +48,10 @@ module.exports = {
       },
       {
         action_id: Constants.SEEDERS.MODULES.EVENTS,
+        level_id: Constants.USERS.LEVELS.USER,
+      },
+      {
+        action_id: Constants.SEEDERS.MODULES.NOTIFICATIONS,
         level_id: Constants.USERS.LEVELS.USER,
       },
     ];

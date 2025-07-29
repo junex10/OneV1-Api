@@ -1,4 +1,6 @@
 export default {
+  USER_SOCKET: 'user/socket',
+  USER_LEFT_SOCKET: 'user/left-socket',
   USER_LOCATION: 'user/location',
   NEW_MESSAGE: 'chat/new-message',
   NEW_PIC_MESSAGE: 'chat/new-pic-message',

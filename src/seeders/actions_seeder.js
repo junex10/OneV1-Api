@@ -36,6 +36,13 @@ module.exports = {
         name: 'Events',
         code: '/events',
       },
+      {
+        id: 5,
+        main: Constants.SEEDERS.ACTIONS.MAIN,
+        module_id: Constants.SEEDERS.MODULES.NOTIFICATIONS,
+        name: 'Notifications',
+        code: '/notifications',
+      },
     ];
     return queryInterface.bulkInsert('actions', items);
   },

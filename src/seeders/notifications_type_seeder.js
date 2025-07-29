@@ -7,13 +7,16 @@ module.exports = {
     await queryInterface.sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
     const items = [
       {
-        id: 1,
-        name: 'New user',
-        code: 'auth/new-user'
-      }
+        name: 'New message',
+        code: 'chat/new-message',
+      },
+      {
+        name: 'New event',
+        code: 'event/new-event',
+      },
     ];
-    return queryInterface.bulkInsert('notification_types',items);
+    return queryInterface.bulkInsert('notification_types', items);
   },
 
-  down: async (queryInterface, Sequelize) => {}
+  down: async (queryInterface, Sequelize) => {},
 };

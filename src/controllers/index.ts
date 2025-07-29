@@ -13,6 +13,7 @@ import { AppEventsModule } from './app/events/events.module';
 import { AppProfileModule } from './app/profile/profile.module';
 import { ChatModule } from './app/chat/chat.module';
 import { AppFriendsModule } from './app/friends/friends.module';
+import { AppNotificationsModule } from './app/notifications/notifications.module';
 
 export {
   AuthModule,
@@ -27,4 +28,5 @@ export {
   AppProfileModule,
   ChatModule,
   AppFriendsModule,
+  AppNotificationsModule,
 };

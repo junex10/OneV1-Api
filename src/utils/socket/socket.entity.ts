@@ -52,3 +52,6 @@ export class SocketNewEventPostLike {
   user_id: number;
   real_event_id: number;
 }
+export class SocketOnUserSocket {
+  user_id: number;
+}

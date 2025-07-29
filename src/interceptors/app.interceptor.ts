@@ -33,6 +33,7 @@ export class AppInterceptor implements NestInterceptor {
         Constants.MODULES.CHAT,
         Constants.MODULES.EVENTS,
         Constants.MODULES.PROFILE,
+        Constants.MODULES.NOTIFICATIONS,
       ];
       const hasAll = requiredCodes.every((code) =>
         jwt.some(

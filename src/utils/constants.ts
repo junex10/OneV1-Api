@@ -51,6 +51,7 @@ export default {
     CHAT: '/chat',
     FRIENDS: '/friends',
     EVENTS: '/events',
+    NOTIFICATIONS: '/notifications',
   },
   EVENT_STATUS: {
     PENDING: 0, // -> Schedule to start later, not started
