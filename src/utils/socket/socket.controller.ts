@@ -18,6 +18,7 @@ import {
   SocketNewEventPost,
   SocketNewEventPostLike,
   SocketNewPicChatMessage,
+  SocketOnNewReadNotificationSocket,
   SocketOnUserSocket,
 } from './socket.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -33,6 +34,17 @@ export class SocketController {
     const event = 'test';
     console.log('TEST');
     return { test: ' JUST TESTING ', data };
+  }
+
+  // We're gonna read all notif
+
+  @SubscribeMessage(SocketEvents.NOTIFICATIONS.READ)
+  async onNewReadNotification(client, data: SocketOnNewReadNotificationSocket) {
+    const newData = await this.socketService.onNewReadNotification(data);
+    this.server
+      .to(`user_socket_${data.user_id}`)
+      .emit(SocketEvents.NOTIFICATIONS.READ, newData);
+    return { notifications: newData };
   }
 
   @SubscribeMessage(SocketEvents.USER_SOCKET)

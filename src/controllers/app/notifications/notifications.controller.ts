@@ -39,4 +39,40 @@ export class NotificationsController {
       );
     }
   }
+  @Post('getCountNotifications')
+  async getCountNotifications(
+    @Res() response: Response,
+    @Body() request: NotificationDTO,
+  ) {
+    try {
+      const notifications =
+        await this.notificationsService.getCountNotifications(request);
+      return response.status(HttpStatus.OK).json({
+        notifications,
+      });
+    } catch (e) {
+      throw new UnprocessableEntityException(
+        'Connection error, please try again',
+        e.message,
+      );
+    }
+  }
+  @Post('readNotifications')
+  async readNotifications(
+    @Res() response: Response,
+    @Body() request: NotificationDTO,
+  ) {
+    try {
+      const notifications =
+        await this.notificationsService.readNotifications(request);
+      return response.status(HttpStatus.OK).json({
+        notifications,
+      });
+    } catch (e) {
+      throw new UnprocessableEntityException(
+        'Connection error, please try again',
+        e.message,
+      );
+    }
+  }
 }

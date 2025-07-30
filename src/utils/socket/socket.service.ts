@@ -11,6 +11,7 @@ import {
   EventPostLikes,
   Events,
   EventsUsersJoined,
+  Notifications,
   Person,
   User,
 } from 'src/models';
@@ -25,6 +26,7 @@ import {
   SocketNewEventPost,
   SocketNewEventPostLike,
   SocketNewPicChatMessage,
+  SocketOnNewReadNotificationSocket,
 } from './socket.entity';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -47,6 +49,8 @@ export class SocketService {
     private eventsPostLikesModel: typeof EventPostLikes,
     @InjectModel(EventComments)
     private eventsCommentModel: typeof EventComments,
+    @InjectModel(Notifications)
+    private notificationsModel: typeof Notifications,
     @InjectModel(EventsUsersJoined)
     private eventsJoinedModel: typeof EventsUsersJoined,
   ) {}
@@ -99,6 +103,18 @@ export class SocketService {
       },
     );
   };
+
+  onNewReadNotification = async (
+    request: SocketOnNewReadNotificationSocket,
+  ) => {
+    return await this.notificationsModel.findAndCountAll({
+      where: {
+        receiver_id: request.user_id,
+        status: Constants.NOTIFICATIONS.STATUS.UNREADED,
+      },
+    });
+  };
+
   newMessage = async (request: SocketNewChatMessage) => {
     await this.chatsModel.create({
       chat_session_id: request.chat_session_id,

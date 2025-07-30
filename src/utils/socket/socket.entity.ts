@@ -55,3 +55,6 @@ export class SocketNewEventPostLike {
 export class SocketOnUserSocket {
   user_id: number;
 }
+export class SocketOnNewReadNotificationSocket {
+  user_id: number;
+}

@@ -24,4 +24,40 @@ export class NotificationsService {
       order: [['created_at', 'DESC']],
     });
   };
+
+  getCountNotifications = async (request: NotificationDTO) => {
+    if (!request.user_id) {
+      return null;
+    }
+    return await this.notificationsModel.findAndCountAll({
+      where: {
+        receiver_id: request.user_id,
+        status: Constants.NOTIFICATIONS.STATUS.UNREADED,
+      },
+    });
+  };
+
+  readNotifications = async (request: NotificationDTO) => {
+    if (!request.user_id) {
+      return null;
+    }
+
+    await this.notificationsModel.update(
+      {
+        status: Constants.NOTIFICATIONS.STATUS.READED,
+      },
+      {
+        where: {
+          receiver_id: request.user_id,
+          status: Constants.NOTIFICATIONS.STATUS.UNREADED,
+        },
+      },
+    );
+    return await this.notificationsModel.findAll({
+      where: {
+        receiver_id: request.user_id,
+        status: Constants.NOTIFICATIONS.STATUS.UNREADED,
+      },
+    });
+  };
 }
