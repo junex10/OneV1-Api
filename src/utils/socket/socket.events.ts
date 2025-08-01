@@ -15,5 +15,7 @@ export default {
   },
   NOTIFICATIONS: {
     READ: 'notifications/read-notifications',
+    NEW_MESSAGE: 'notifications/new-message',
+    NEW_EVENT: 'notifications/new-event',
   },
 };

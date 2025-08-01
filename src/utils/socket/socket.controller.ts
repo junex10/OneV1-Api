@@ -18,6 +18,8 @@ import {
   SocketNewEventPost,
   SocketNewEventPostLike,
   SocketNewPicChatMessage,
+  SocketOnNewEventNotfSocket,
+  SocketOnNewMessageNotfSocket,
   SocketOnNewReadNotificationSocket,
   SocketOnUserSocket,
 } from './socket.entity';
@@ -36,6 +38,7 @@ export class SocketController {
     return { test: ' JUST TESTING ', data };
   }
 
+  // Notifications handles
   // We're gonna read all notif
 
   @SubscribeMessage(SocketEvents.NOTIFICATIONS.READ)
@@ -47,8 +50,32 @@ export class SocketController {
     return { notifications: newData };
   }
 
+  @SubscribeMessage(SocketEvents.NOTIFICATIONS.NEW_MESSAGE)
+  async onNewMessageNotification(client, data: SocketOnNewMessageNotfSocket) {
+    const newData = await this.socketService.onNewMessageNotification(data);
+    this.server
+      .to(`user_socket_${data.receiver_id}`)
+      .emit(SocketEvents.NOTIFICATIONS.NEW_MESSAGE, newData);
+    return { notifications: newData };
+  }
+
+  @SubscribeMessage(SocketEvents.NOTIFICATIONS.NEW_EVENT)
+  async onNewEventNotification(client, data: SocketOnNewEventNotfSocket) {
+    const followerIds = await this.socketService.onNewEventNotification(data);
+
+    // Emit notification to each follower's socket group
+    followerIds.forEach((userId: number) => {
+      this.server
+        .to(`user_socket_${userId}`)
+        .emit(SocketEvents.NOTIFICATIONS.NEW_EVENT, { user_id: userId });
+    });
+
+    return { notifications: followerIds };
+  }
+
   @SubscribeMessage(SocketEvents.USER_SOCKET)
   async onUserSocket(client, data: SocketOnUserSocket) {
+    console.log('Hi THERE ');
     client.join(`user_socket_${data.user_id}`);
     this.server
       .to(`user_socket_${data.user_id}`)

@@ -58,3 +58,11 @@ export class SocketOnUserSocket {
 export class SocketOnNewReadNotificationSocket {
   user_id: number;
 }
+export class SocketOnNewMessageNotfSocket {
+  sender_id: number;
+  receiver_id: number;
+  message: string;
+}
+export class SocketOnNewEventNotfSocket {
+  sender_id: number;
+}

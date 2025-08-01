@@ -11,6 +11,7 @@ import {
   EventPostLikes,
   Events,
   EventsUsersJoined,
+  Friends,
   Notifications,
   Person,
   User,
@@ -26,6 +27,8 @@ import {
   SocketNewEventPost,
   SocketNewEventPostLike,
   SocketNewPicChatMessage,
+  SocketOnNewEventNotfSocket,
+  SocketOnNewMessageNotfSocket,
   SocketOnNewReadNotificationSocket,
 } from './socket.entity';
 import * as fs from 'fs';
@@ -51,6 +54,8 @@ export class SocketService {
     private eventsCommentModel: typeof EventComments,
     @InjectModel(Notifications)
     private notificationsModel: typeof Notifications,
+    @InjectModel(Friends)
+    private friendsModel: typeof Friends,
     @InjectModel(EventsUsersJoined)
     private eventsJoinedModel: typeof EventsUsersJoined,
   ) {}
@@ -104,15 +109,80 @@ export class SocketService {
     );
   };
 
+  // Notifications
+
   onNewReadNotification = async (
     request: SocketOnNewReadNotificationSocket,
   ) => {
+    await this.notificationsModel.update(
+      {
+        status: Constants.NOTIFICATIONS.STATUS.READED,
+      },
+      {
+        where: {
+          receiver_id: request.user_id,
+          status: Constants.NOTIFICATIONS.STATUS.UNREADED,
+        },
+      },
+    );
+
     return await this.notificationsModel.findAndCountAll({
       where: {
         receiver_id: request.user_id,
         status: Constants.NOTIFICATIONS.STATUS.UNREADED,
       },
     });
+  };
+
+  onNewMessageNotification = async (request: SocketOnNewMessageNotfSocket) => {
+    await this.notificationsModel.create({
+      title: 'New message',
+      message: request.message,
+      sender_id: request.sender_id,
+      receiver_id: request.receiver_id,
+    });
+
+    return await this.notificationsModel.findAll({
+      where: {
+        receiver_id: request.receiver_id,
+        status: Constants.NOTIFICATIONS.STATUS.UNREADED,
+      },
+    });
+  };
+
+  onNewEventNotification = async (request: SocketOnNewEventNotfSocket) => {
+    // Find all friends where sender_id is either sender or receiver and status is FOLLOWED
+    const friends = await this.friendsModel.findAll({
+      where: {
+        [Op.or]: [
+          { sender_id: request.sender_id },
+          { receiver_id: request.sender_id },
+        ],
+        status: Constants.USER.FRIENDS.FOLLOWED,
+      },
+    });
+
+    // Get all follower user IDs except the sender
+    const followerIds = friends.map((friend) => {
+      return friend.sender_id === request.sender_id
+        ? friend.receiver_id
+        : friend.sender_id;
+    });
+
+    // Create a notification for each follower
+    await Promise.all(
+      followerIds.map((followerId) =>
+        this.notificationsModel.create({
+          title: 'New event',
+          message: 'A new event has been created!',
+          sender_id: request.sender_id,
+          receiver_id: followerId,
+        }),
+      ),
+    );
+
+    // Return all notifications for these followers (optional)
+    return followerIds;
   };
 
   newMessage = async (request: SocketNewChatMessage) => {
