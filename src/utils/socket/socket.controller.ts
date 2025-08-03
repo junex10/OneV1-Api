@@ -75,7 +75,6 @@ export class SocketController {
 
   @SubscribeMessage(SocketEvents.USER_SOCKET)
   async onUserSocket(client, data: SocketOnUserSocket) {
-    console.log('Hi THERE ');
     client.join(`user_socket_${data.user_id}`);
     this.server
       .to(`user_socket_${data.user_id}`)
