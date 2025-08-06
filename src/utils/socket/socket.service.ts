@@ -28,6 +28,7 @@ import {
   SocketNewEventPost,
   SocketNewEventPostLike,
   SocketNewPicChatMessage,
+  SocketOnAcceptingInvitation,
   SocketOnNewEventNotfSocket,
   SocketOnNewMessageNotfSocket,
   SocketOnNewReadNotificationSocket,
@@ -488,6 +489,7 @@ export class SocketService {
           receiver_id: userId,
           notification_type_id: Constants.NOTIFICATIONS.TYPES.NEW_INVITATION,
           status: Constants.NOTIFICATIONS.STATUS.UNREADED,
+          event_id: request.event_id,
         }),
       ),
     );
@@ -497,6 +499,27 @@ export class SocketService {
         receiver_id: { [Op.in]: request.user_ids },
         notification_type_id: Constants.NOTIFICATIONS.TYPES.NEW_INVITATION,
         status: Constants.NOTIFICATIONS.STATUS.UNREADED,
+      },
+    });
+  };
+
+  onAcceptInvitation = async (request: SocketOnAcceptingInvitation) => {
+    // Mark all NEW_INVITATION notifications for this user and event as READED
+    await this.notificationsModel.update(
+      {
+        status: Constants.NOTIFICATIONS.STATUS.READED,
+      },
+      {
+        where: {
+          id: request.notification_id,
+        },
+      },
+    );
+
+    // Optionally, return updated notifications for this user
+    return await this.notificationsModel.findOne({
+      where: {
+        id: request.notification_id,
       },
     });
   };

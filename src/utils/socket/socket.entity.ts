@@ -71,3 +71,8 @@ export class SocketFriendInvitationEvent {
   event_id: number;
   sender_id: number;
 }
+export class SocketOnAcceptingInvitation {
+  user_id: number;
+  event_id: number;
+  notification_id: number;
+}

@@ -19,6 +19,7 @@ import {
   SocketNewEventPost,
   SocketNewEventPostLike,
   SocketNewPicChatMessage,
+  SocketOnAcceptingInvitation,
   SocketOnNewEventNotfSocket,
   SocketOnNewMessageNotfSocket,
   SocketOnNewReadNotificationSocket,
@@ -190,6 +191,21 @@ export class SocketController {
         .to(`user_socket_${notif.receiver_id}`)
         .emit(SocketEvents.EVENTS.INVITE_FRIEND, { notification: notif });
     });
+
+    return { data: notifications };
+  }
+
+  @SubscribeMessage(SocketEvents.EVENTS.ACCEPT_INVITATION)
+  async onAcceptInvitation(client, data: SocketOnAcceptingInvitation) {
+    const notifications = await this.socketService.onAcceptInvitation(data);
+    client.join(`event_${data.event_id}`);
+
+    this.server
+      .to(`event_${data.event_id}`)
+      .emit(SocketEvents.EVENTS.ACCEPT_INVITATION, {
+        notification_id: data.notification_id,
+        event_id: data.event_id,
+      });
 
     return { data: notifications };
   }

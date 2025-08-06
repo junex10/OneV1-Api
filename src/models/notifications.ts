@@ -9,6 +9,7 @@ import {
   DefaultScope,
 } from 'sequelize-typescript';
 import { NotificationType } from './notification_type';
+import { Events } from './events';
 
 @DefaultScope(() => ({
   include: [
@@ -25,6 +26,9 @@ import { NotificationType } from './notification_type';
 export class Notifications extends Model {
   @BelongsTo(() => NotificationType, 'notification_type_id')
   notification_type: NotificationType;
+
+  @BelongsTo(() => Events, 'event_id')
+  event: Events;
 
   @Column
   title: string;
@@ -43,6 +47,9 @@ export class Notifications extends Model {
 
   @Column
   notification_type_id: number;
+
+  @Column
+  event_id: number;
 
   @CreatedAt
   @Column
