@@ -11,6 +11,7 @@ import { SocketService } from './socket.service';
 import {
   SocketCheckNewEventIncoming,
   SocketCoordinates,
+  SocketFriendInvitationEvent,
   SocketJoinEventDTO,
   SocketNewChatMessage,
   SocketNewEventComment,
@@ -177,6 +178,20 @@ export class SocketController {
       .to(`event_${data.real_event_id}`)
       .emit(SocketEvents.EVENTS.NEW_POST_LIKE, { post: newData });
     return { post: newData };
+  }
+
+  @SubscribeMessage(SocketEvents.EVENTS.INVITE_FRIEND)
+  async onInviteFriendEvent(client, data: SocketFriendInvitationEvent) {
+    const notifications = await this.socketService.onInviteFriendEvent(data);
+
+    // Send socket to each invited user's group
+    notifications.forEach((notif) => {
+      this.server
+        .to(`user_socket_${notif.receiver_id}`)
+        .emit(SocketEvents.EVENTS.INVITE_FRIEND, { notification: notif });
+    });
+
+    return { data: notifications };
   }
 
   // CRONS - Events

@@ -39,6 +39,11 @@ export default {
       READED: 1,
       UNREADED: 0,
     },
+    TYPES: {
+      NEW_MESSAGE: 6,
+      NEW_EVENT: 7,
+      NEW_INVITATION: 8,
+    },
   },
   PER_PAGE: 30,
   PER_PAGE_WEB: 10,

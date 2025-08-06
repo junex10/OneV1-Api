@@ -12,6 +12,8 @@ export default {
     NEW_LIKE: 'event/new-like',
     NEW_POST: 'event/new-post',
     NEW_POST_LIKE: 'event/new-post-like',
+    INVITE_FRIEND: 'event/invite-friend',
+    ACCEPT_INVITATION: 'event/accept-invitation',
   },
   NOTIFICATIONS: {
     READ: 'notifications/read-notifications',

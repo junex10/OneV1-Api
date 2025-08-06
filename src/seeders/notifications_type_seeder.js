@@ -14,6 +14,10 @@ module.exports = {
         name: 'New event',
         code: 'event/new-event',
       },
+      {
+        name: 'Event invitation',
+        code: 'event/invite-friend',
+      },
     ];
     return queryInterface.bulkInsert('notification_types', items);
   },

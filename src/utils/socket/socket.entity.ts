@@ -66,3 +66,8 @@ export class SocketOnNewMessageNotfSocket {
 export class SocketOnNewEventNotfSocket {
   sender_id: number;
 }
+export class SocketFriendInvitationEvent {
+  user_ids: number[];
+  event_id: number;
+  sender_id: number;
+}

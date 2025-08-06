@@ -20,6 +20,7 @@ import {
   GetLogs,
   SocketCheckNewEventIncoming,
   SocketCoordinates,
+  SocketFriendInvitationEvent,
   SocketJoinEventDTO,
   SocketNewChatMessage,
   SocketNewEventComment,
@@ -140,6 +141,7 @@ export class SocketService {
       message: request.message,
       sender_id: request.sender_id,
       receiver_id: request.receiver_id,
+      notification_type_id: Constants.NOTIFICATIONS.TYPES.NEW_MESSAGE,
     });
 
     return await this.notificationsModel.findAll({
@@ -177,6 +179,7 @@ export class SocketService {
           message: 'A new event has been created!',
           sender_id: request.sender_id,
           receiver_id: followerId,
+          notification_type_id: Constants.NOTIFICATIONS.TYPES.NEW_EVENT,
         }),
       ),
     );
@@ -428,7 +431,6 @@ export class SocketService {
   };
 
   onNewEventPostLike = async (request: SocketNewEventPostLike) => {
-    console.log('HI');
     // Check if the user already liked the post
     const likeCheck = await this.eventsPostLikesModel.findOne({
       where: {
@@ -472,6 +474,30 @@ export class SocketService {
     return await this.eventsPostModel.findOne({
       where: { id: request.event_id },
       include: [{ model: User, include: [{ model: Person }] }],
+    });
+  };
+
+  onInviteFriendEvent = async (request: SocketFriendInvitationEvent) => {
+    // Create a notification for each invited friend
+    await Promise.all(
+      request.user_ids.map((userId) =>
+        this.notificationsModel.create({
+          title: 'Event Invitation',
+          message: 'You have been invited to an event!',
+          sender_id: request.sender_id,
+          receiver_id: userId,
+          notification_type_id: Constants.NOTIFICATIONS.TYPES.NEW_INVITATION,
+          status: Constants.NOTIFICATIONS.STATUS.UNREADED,
+        }),
+      ),
+    );
+
+    return await this.notificationsModel.findAll({
+      where: {
+        receiver_id: { [Op.in]: request.user_ids },
+        notification_type_id: Constants.NOTIFICATIONS.TYPES.NEW_INVITATION,
+        status: Constants.NOTIFICATIONS.STATUS.UNREADED,
+      },
     });
   };
 

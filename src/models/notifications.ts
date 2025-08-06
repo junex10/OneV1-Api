@@ -1,11 +1,30 @@
-import { Column, Model, Table, CreatedAt, UpdatedAt, DeletedAt } from "sequelize-typescript";
+import {
+  Column,
+  Model,
+  Table,
+  CreatedAt,
+  UpdatedAt,
+  DeletedAt,
+  BelongsTo,
+  DefaultScope,
+} from 'sequelize-typescript';
+import { NotificationType } from './notification_type';
 
+@DefaultScope(() => ({
+  include: [
+    {
+      model: NotificationType,
+    },
+  ],
+}))
 @Table({
   timestamps: true,
   paranoid: true,
-  tableName: 'notifications'
+  tableName: 'notifications',
 })
 export class Notifications extends Model {
+  @BelongsTo(() => NotificationType, 'notification_type_id')
+  notification_type: NotificationType;
 
   @Column
   title: string;
@@ -21,6 +40,9 @@ export class Notifications extends Model {
 
   @Column
   status: number;
+
+  @Column
+  notification_type_id: number;
 
   @CreatedAt
   @Column
