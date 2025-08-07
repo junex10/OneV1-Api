@@ -116,6 +116,7 @@ export class SocketService {
   onNewReadNotification = async (
     request: SocketOnNewReadNotificationSocket,
   ) => {
+    // Only mark as read notifications that are NOT invitations
     await this.notificationsModel.update(
       {
         status: Constants.NOTIFICATIONS.STATUS.READED,
@@ -124,6 +125,9 @@ export class SocketService {
         where: {
           receiver_id: request.user_id,
           status: Constants.NOTIFICATIONS.STATUS.UNREADED,
+          notification_type_id: {
+            [Op.ne]: Constants.NOTIFICATIONS.TYPES.NEW_INVITATION,
+          },
         },
       },
     );

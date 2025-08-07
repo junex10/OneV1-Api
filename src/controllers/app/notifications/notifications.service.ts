@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { NotificationType, Notifications, User } from 'src/models';
+import { Events, NotificationType, Notifications, User } from 'src/models';
 import { Constants } from 'src/utils';
 import { NotificationDTO } from './notifications.entity';
 import { Op } from 'sequelize';
@@ -12,6 +12,7 @@ export class NotificationsService {
     private notificationsTypeModel: typeof NotificationType,
     @InjectModel(Notifications)
     private notificationsModel: typeof Notifications,
+    private eventsModel: typeof Events,
     @InjectModel(User) private userModel: typeof User,
   ) {}
 
@@ -19,10 +20,30 @@ export class NotificationsService {
     if (!request.user_id) {
       return null;
     }
-    return await this.notificationsModel.findAll({
+
+    // Get all notifications for the user
+    const allNotifications = await this.notificationsModel.findAll({
       where: { receiver_id: request.user_id },
-      order: [['created_at', 'DESC']],
     });
+
+    // Separate invitations and other notifications
+    const invitations = allNotifications.filter(
+      (notif) =>
+        notif.notification_type_id ===
+        Constants.NOTIFICATIONS.TYPES.NEW_INVITATION,
+    );
+    const others = allNotifications.filter(
+      (notif) =>
+        notif.notification_type_id !==
+        Constants.NOTIFICATIONS.TYPES.NEW_INVITATION,
+    );
+
+    // Sort invitations and others by created_at DESC
+    invitations.sort((a: any, b: any) => b.created_at - a.created_at);
+    others.sort((a: any, b: any) => b.created_at - a.created_at);
+
+    // Return invitations first, then others
+    return [...invitations, ...others];
   };
 
   getCountNotifications = async (request: NotificationDTO) => {
