@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Events, NotificationType, Notifications, User } from 'src/models';
+import { NotificationType, Notifications, User } from 'src/models';
 import { Constants } from 'src/utils';
 import { NotificationDTO } from './notifications.entity';
 import { Op } from 'sequelize';
@@ -12,7 +12,6 @@ export class NotificationsService {
     private notificationsTypeModel: typeof NotificationType,
     @InjectModel(Notifications)
     private notificationsModel: typeof Notifications,
-    private eventsModel: typeof Events,
     @InjectModel(User) private userModel: typeof User,
   ) {}
 
