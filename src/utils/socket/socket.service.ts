@@ -581,4 +581,33 @@ export class SocketService {
       },
     );
   };
+
+  checkActiveEventInvitations = async () => {
+    const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000);
+
+    // Find all NEW_INVITATION notifications that are still UNREADED and older than 6 hours
+    const expiredInvitations = await this.notificationsModel.findAll({
+      where: {
+        notification_type_id: Constants.NOTIFICATIONS.TYPES.NEW_INVITATION,
+        status: Constants.NOTIFICATIONS.STATUS.UNREADED,
+        created_at: { [Op.lt]: sixHoursAgo },
+      },
+    });
+
+    // Update their status to READED
+    if (expiredInvitations.length > 0) {
+      await this.notificationsModel.update(
+        { status: Constants.NOTIFICATIONS.STATUS.READED },
+        {
+          where: {
+            notification_type_id: Constants.NOTIFICATIONS.TYPES.NEW_INVITATION,
+            status: Constants.NOTIFICATIONS.STATUS.UNREADED,
+            created_at: { [Op.lt]: sixHoursAgo },
+          },
+        },
+      );
+    }
+
+    return expiredInvitations.length;
+  };
 }

@@ -216,4 +216,11 @@ export class SocketController {
   async checkActiveEvents() {
     await this.socketService.checkActiveEvents();
   }
+
+  //We're check events invitations active and verify if they're expired, in that case we change their status
+
+  @Cron(CronExpression.EVERY_10_MINUTES)
+  async checkActiveEventInvitations() {
+    await this.socketService.checkActiveEventInvitations();
+  }
 }
