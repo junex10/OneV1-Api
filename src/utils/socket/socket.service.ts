@@ -158,6 +158,12 @@ export class SocketService {
   };
 
   onNewEventNotification = async (request: SocketOnNewEventNotfSocket) => {
+    const host = await this.userModel.findOne({
+      where: {
+        id: request.sender_id,
+      },
+      include: [{ model: Person }],
+    });
     // Find all friends where sender_id is either sender or receiver and status is FOLLOWED
     const friends = await this.friendsModel.findAll({
       where: {
@@ -181,7 +187,7 @@ export class SocketService {
       followerIds.map((followerId) =>
         this.notificationsModel.create({
           title: 'New event',
-          message: 'A new event has been created!',
+          message: `${host.person.username} has created a new event`,
           sender_id: request.sender_id,
           receiver_id: followerId,
           notification_type_id: Constants.NOTIFICATIONS.TYPES.NEW_EVENT,
